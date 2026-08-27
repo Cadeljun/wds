@@ -1,0 +1,43 @@
+{
+  "name": "wds-web",
+  "version": "2.0.0",
+  "description": "WDS Williams Delivery Service - Full Stack Web App - Code-Split + Validated + Secured",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "analyze": "ANALYZE=true npm run build",
+    "build:visualize": "npm install --save-dev rollup-plugin-visualizer && npm run build"
+  },
+  "dependencies": {
+    "next": "14.2.5",
+    "react": "^18",
+    "react-dom": "^18",
+    "@supabase/supabase-js": "^2.45.0",
+    "@supabase/auth-ui-react": "^0.4.7",
+    "@supabase/auth-ui-shared": "^0.1.8",
+    "leaflet": "^1.9.4",
+    "react-leaflet": "^4.2.1",
+    "lucide-react": "^0.400.0",
+    "zustand": "^4.5.4",
+    "date-fns": "^3.6.0",
+    "zod": "^3.23.8",
+    "xss": "^1.0.15"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/leaflet": "^1.9.12",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "autoprefixer": "^10.4.19",
+    "@next/bundle-analyzer": "^14.2.5",
+    "source-map-explorer": "^2.5.3"
+  }
+}

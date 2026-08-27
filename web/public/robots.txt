@@ -1,0 +1,27 @@
+User-agent: *
+Allow: /
+
+# Block private & admin routes - authenticated only
+Disallow: /admin/
+Disallow: /admin
+Disallow: /account
+Disallow: /account/
+Disallow: /dashboard
+Disallow: /dashboard/
+Disallow: /rider/
+Disallow: /rider
+Disallow: /order/
+Disallow: /api/
+Disallow: /auth/callback
+
+# Block non-existent / soft 404s (prevents crawling dead ends)
+Disallow: /search
+
+# Sitemap location
+Sitemap: https://wds.com.gh/sitemap.xml
+
+# Respectful crawling for Ghana 3G users
+Crawl-delay: 1
+
+# Host
+Host: https://wds.com.gh

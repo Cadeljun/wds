@@ -1,0 +1,60 @@
+PLAY STORE LISTING - WDS Rider
+
+App Name: WDS Rider - Williams Delivery
+Short Description (80 chars):
+Accra's fastest delivery app for riders. Accept jobs, earn with MoMo daily.
+
+Full Description:
+WDS - Williams Delivery Service - Rider App
+
+Join Accra's fastest growing delivery team! WDS Rider is for Williams' 24+ riders to accept delivery jobs, navigate, and earn daily via MTN MoMo, Vodafone Cash, AirtelTigo Money.
+
+Features:
+🏍️ See nearby jobs - Sorted by nearest, urgent first
+💰 Earn 80% of delivery fee - GHS 28-52 per trip, daily payout via MoMo at 6pm
+🗺️ Live navigation - Google Maps integration
+📦 All delivery types - Food, parcels, groceries, medicine, documents
+⭐ Build rating - 4.9 star system, level up
+📱 Real-time updates - Supabase Realtime
+💳 Multiple payouts - MTN MoMo, Vodafone, AirtelTigo, Bank
+🛡️ Insured - Up to GHS 2,000
+
+How it works:
+1. Toggle Online in East Legon, Osu, Kaneshie, Madina, Airport
+2. See job: Osu → Airport GHS 28 3.2km URGENT
+3. Accept → Call → Navigate → Pickup → Delivered + photo
+4. Earnings +GHS 22.4 instantly, payout daily
+
+Requirements:
+- Motorbike, bicycle, car or van
+- Valid license plate
+- Ghana phone (0244, 020, 054)
+- Approved by Williams Admin
+
+Tech: Expo, Supabase, Paystack Ghana, Google Maps. Works on 3G.
+
+Contact: 0244 000 000 • Accra • wds.com.gh
+
+Category: Business
+Content Rating: Everyone
+Contact Email: support@wds.com.gh
+Privacy Policy: https://wds.com.gh/privacy
+Website: https://wds.com.gh
+
+Screenshots:
+1. Jobs list
+2. Active delivery
+3. Earnings
+4. Profile
+5. Auth
+6. Map
+
+Build Commands:
+cd mobile
+npm install
+eas build --platform android --profile preview (APK for WhatsApp)
+eas build --platform android --profile production (AAB for Play Store)
+eas submit --platform android
+
+APK Share Message:
+🚀 WDS Rider App ready! Download APK: [EAS link] - Log in 0244... / 123456. Toggle Online in East Legon/Osu. Earn 80%, MoMo daily 6pm. Call Williams 0244000000

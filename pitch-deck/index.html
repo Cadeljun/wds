@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WDS Pitch Deck - Williams Delivery Service</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{font-family:'Inter',sans-serif}
+.jakarta{font-family:'Plus Jakarta Sans',sans-serif}
+@media print { .no-print{display:none} .page{break-after:always; box-shadow:none!important; border:none!important} }
+</style>
+</head>
+<body class="bg-[#F5F5F7] text-[#0A0A0A]">
+
+<div class="no-print sticky top-0 z-50 bg-black text-white px-6 py-3 flex items-center justify-between">
+  <div class="flex items-center gap-3"><div class="w-8 h-8 bg-[#FFC700] text-black rounded-lg flex items-center justify-center font-extrabold">W</div><span class="font-bold">WDS Pitch Deck • Williams Delivery Service</span><span class="text-[11px] bg-white/10 px-2 py-1 rounded-full">Accra • Full Stack Ready</span></div>
+  <div class="flex gap-2"><button onclick="window.print()" class="h-9 px-5 bg-[#FFC700] text-black rounded-full font-bold text-[13px]">Print / Save as PDF</button><button onclick="document.getElementById('deck').scrollIntoView({behavior:'smooth'})" class="h-9 px-4 bg-white/10 rounded-full text-[13px]">View Deck ↓</button></div>
+</div>
+
+<div id="deck" class="max-w-[1000px] mx-auto p-4 md:p-8 space-y-8">
+
+  <!-- Slide 1: Cover -->
+  <div class="page bg-white rounded-[32px] p-8 md:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-black/5 min-h-[600px] flex flex-col justify-between relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-[400px] h-[400px] bg-[#FFC700]/20 rounded-full blur-[80px] -mr-20 -mt-20"></div>
+    <div>
+      <div class="flex items-center gap-3 mb-12"><div class="w-12 h-12 bg-black text-[#FFC700] rounded-2xl flex items-center justify-center font-extrabold text-[22px]">W</div><div><div class="jakarta font-extrabold text-[18px]">WDS</div><div class="text-[11px] tracking-[0.15em] uppercase text-black/50 font-bold">Williams Delivery Service</div></div><span class="ml-4 px-3 py-1 bg-[#FFC700]/15 rounded-full text-[11px] font-bold">ACCRA • GHANA • 2026</span></div>
+      <h1 class="jakarta font-extrabold text-[48px] md:text-[72px] leading-[0.9] tracking-[-0.03em]">Deliver anything<br/>in Accra in<br/><span class="relative">minutes<span class="absolute bottom-3 left-0 w-full h-4 bg-[#FFC700] -z-10"></span></span></h1>
+      <p class="text-[18px] text-black/60 mt-6 max-w-[560px] leading-relaxed">Full stack production app: Web + Rider Mobile + Admin Dashboard. Real riders, live tracking, MoMo, Card, Cash. Built for Ghana, ready to scale.</p>
+    </div>
+    <div class="flex flex-wrap items-end justify-between gap-6 mt-12">
+      <div><div class="text-[12px] font-bold uppercase tracking-widest text-black/40 mb-2">Prepared for</div><div class="text-[20px] font-bold">Williams • Owner • WDS</div><div class="text-[14px] text-black/60">24 Riders • East Legon, Osu, Kaneshie, Madina • Accra</div></div>
+      <div class="text-right"><div class="text-[12px] font-bold uppercase tracking-widest text-black/40 mb-2">Full Stack Status</div><div class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full text-[13px] font-bold"><span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Production Ready • Live Demo</div><div class="text-[11px] text-black/40 mt-2">Next.js + Supabase + Expo + Paystack</div></div>
+    </div>
+  </div>
+
+  <!-- Slide 2: Problem -->
+  <div class="page bg-[#0A0A0A] text-white rounded-[32px] p-8 md:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.15)] min-h-[500px]">
+    <div class="text-[11px] font-bold tracking-[0.2em] uppercase text-white/40 mb-8">01 • Problem • Accra Context</div>
+    <div class="grid md:grid-cols-2 gap-10">
+      <div><h2 class="jakarta font-extrabold text-[32px] md:text-[40px] leading-[0.95]">Delivery in Accra is broken.</h2><div class="mt-8 space-y-4 text-[15px] text-white/70 leading-relaxed"><p>• Bolt/Wolt only for food, expensive for parcels (GHS 40-60)</p><p>• No reliable app for documents, groceries, medicine, errands</p><p>• Customers call riders, no tracking, no MoMo integration</p><p>• Riders get calls, no job list, no earnings tracking, cash only</p><p>• Williams has 24 riders but manages via WhatsApp & calls</p></div></div>
+      <div class="bg-white/5 rounded-[24px] p-6 border border-white/10"><div class="text-[12px] font-bold uppercase tracking-wide text-white/40 mb-4">Market Size • Accra</div><div class="space-y-4"><div class="flex justify-between"><span class="text-white/60">Population Greater Accra</span><span class="font-bold">5.5M</span></div><div class="flex justify-between"><span class="text-white/60">Smartphone penetration</span><span class="font-bold">68%</span></div><div class="flex justify-between"><span class="text-white/60">MoMo users Ghana</span><span class="font-bold">19M (MTN)</span></div><div class="flex justify-between"><span class="text-white/60">Delivery demand / day</span><span class="font-bold">~50k orders</span></div><div class="h-[1px] bg-white/10 my-4"></div><div class="text-[13px] text-white/60">Opportunity: Own the "anything delivery" category in Accra, not just food. Like Uber for parcels.</div><div class="mt-4 p-3 bg-[#FFC700]/10 rounded-xl border border-[#FFC700]/20 text-[12px]"><span class="font-bold text-[#FFC700]">WDS Angle:</span> <span class="text-white/80">We already have 24 riders + local knowledge. Build tech, own market.</span></div></div></div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Solution -->
+  <div class="page bg-white rounded-[32px] p-8 md:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-black/5">
+    <div class="text-[11px] font-bold tracking-[0.2em] uppercase text-black/40 mb-8">02 • Solution • WDS Full Stack</div>
+    <h2 class="jakarta font-extrabold text-[36px] leading-[0.9]">One app for everything.<br/>Customer, Rider, Admin.</h2>
+    <div class="grid md:grid-cols-3 gap-6 mt-10">
+      <div class="bg-[#F5F5F7] rounded-[24px] p-6"><div class="w-12 h-12 bg-black text-[#FFC700] rounded-2xl flex items-center justify-center font-bold text-[20px] mb-4">C</div><h3 class="font-bold text-[16px]">Customer App (Web + PWA)</h3><ul class="text-[13px] text-black/60 mt-3 space-y-2 leading-relaxed"><li>• Order in 30s: pickup, drop-off, package type</li><li>• Live price: GHS 15 base + km*2.5 + fee</li><li>• Pay: MTN MoMo, Vodafone, AirtelTigo, Card, Cash via Paystack</li><li>• Track live: rider name, bike, plate, rating, location, ETA</li><li>• History, rating, wallet, promo codes</li></ul><div class="mt-4 text-[11px] font-bold px-2 py-1 bg-black text-white rounded-full inline-block">Next.js 14 • PWA • 3G friendly</div></div>
+      <div class="bg-[#FFC700] rounded-[24px] p-6"><div class="w-12 h-12 bg-black text-white rounded-2xl flex items-center justify-center font-bold text-[20px] mb-4">R</div><h3 class="font-bold text-[16px]">Rider App (Expo Mobile)</h3><ul class="text-[13px] text-black/70 mt-3 space-y-2 leading-relaxed"><li>• See 6 jobs near you, nearest first, urgent badge</li><li>• Accept → Picked up → On the way → Delivered + photo</li><li>• Earnings: GHS 28-52/trip, 80% payout, MoMo daily 6pm</li><li>• Navigation via Google Maps, call customer</li><li>• Background location every 10s, rating, level</li></ul><div class="mt-4 text-[11px] font-bold px-2 py-1 bg-black text-[#FFC700] rounded-full inline-block">Expo • Android APK • Play Store Ready</div></div>
+      <div class="bg-black text-white rounded-[24px] p-6"><div class="w-12 h-12 bg-white text-black rounded-2xl flex items-center justify-center font-bold text-[20px] mb-4">A</div><h3 class="font-bold text-[16px]">Admin Dashboard</h3><ul class="text-[13px] text-white/60 mt-3 space-y-2 leading-relaxed"><li>• KPIs: Revenue GHS 4,280/day, 127 orders, 42m avg</li><li>• Live orders: assign rider, status, price, route</li><li>• Rider fleet: 24 online, approve, track, earnings</li><li>• Pricing control: edit base, perKm, fees, commission</li><li>• Export CSV, Paystack transactions, users</li></ul><div class="mt-4 text-[11px] font-bold px-2 py-1 bg-white/10 rounded-full inline-block border border-white/10">Next.js • Supabase Realtime</div></div>
+    </div>
+  </div>
+
+  <!-- Slide 4: Tech Stack -->
+  <div class="page bg-white rounded-[32px] p-8 md:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-black/5">
+    <div class="text-[11px] font-bold tracking-[0.2em] uppercase text-black/40 mb-8">03 • Tech Stack • Simple & Scalable</div>
+    <div class="grid md:grid-cols-[1.2fr_0.8fr] gap-8">
+      <div>
+        <h2 class="jakarta font-extrabold text-[28px] leading-[0.95]">Built for Ghana.<br/>Free to start, scales to 5000 orders/day.</h2>
+        <div class="mt-8 grid grid-cols-2 gap-4">
+          <div class="border border-black/10 rounded-2xl p-4"><div class="text-[11px] font-bold uppercase text-black/40">Frontend</div><div class="font-bold mt-1">Next.js 14 + Tailwind + PWA</div><div class="text-[12px] text-black/60 mt-1">One codebase web + mobile, 3G friendly, SEO wds.com.gh</div></div>
+          <div class="border border-black/10 rounded-2xl p-4"><div class="text-[11px] font-bold uppercase text-black/40">Backend</div><div class="font-bold mt-1">Supabase (Postgres + Auth + Realtime)</div><div class="text-[12px] text-black/60 mt-1">No DevOps, phone OTP, RLS, free tier 500 riders</div></div>
+          <div class="border border-black/10 rounded-2xl p-4"><div class="text-[11px] font-bold uppercase text-black/40">Maps</div><div class="font-bold mt-1">Leaflet OSM free → Google Maps</div><div class="text-[12px] text-black/60 mt-1">Free for MVP, $200 free credit, swap via lib/maps.ts</div></div>
+          <div class="border border-black/10 rounded-2xl p-4"><div class="text-[11px] font-bold uppercase text-black/40">Payments</div><div class="font-bold mt-1">Paystack Ghana</div><div class="text-[12px] text-black/60 mt-1">MoMo MTN/Voda/AirtelTigo, Card, 1.95% fee, webhook</div></div>
+          <div class="border border-black/10 rounded-2xl p-4"><div class="text-[11px] font-bold uppercase text-black/40">Mobile</div><div class="font-bold mt-1">Expo React Native</div><div class="text-[12px] text-black/60 mt-1">One team web+mobile, APK in 15 mins, Play Store</div></div>
+          <div class="border border-black/10 rounded-2xl p-4"><div class="text-[11px] font-bold uppercase text-black/40">Realtime</div><div class="font-bold mt-1">Supabase Realtime + FCM</div><div class="text-[12px] text-black/60 mt-1">Live tracking, no custom websockets, push notifs</div></div>
+        </div>
+      </div>
+      <div class="bg-[#F5F5F7] rounded-[24px] p-6">
+        <div class="text-[12px] font-bold uppercase tracking-wide text-black/40 mb-4">Cost at Scale</div>
+        <div class="space-y-3 text-[13px]">
+          <div class="flex justify-between"><span>0-100 orders/day</span><span class="font-bold">GHS 0-350/mo</span></div><div class="text-[11px] text-black/50">Supabase free + Vercel free + OSM free + Paystack 1.95%</div>
+          <div class="h-[1px] bg-black/10 my-3"></div>
+          <div class="flex justify-between"><span>100-1000 orders/day</span><span class="font-bold">GHS 350-600/mo</span></div><div class="text-[11px] text-black/50">Supabase Pro $25 + Vercel $20 + Google Maps $20</div>
+          <div class="h-[1px] bg-black/10 my-3"></div>
+          <div class="flex justify-between"><span>1000-5000 orders/day</span><span class="font-bold">GHS 600-1500/mo</span></div><div class="text-[11px] text-black/50">Add Redis, TimescaleDB, merchant portal</div>
+          <div class="mt-6 p-3 bg-black text-white rounded-xl text-[12px]"><span class="font-bold">Why this stack?</span> No server to manage, Ghana optimized (MoMo, phone OTP, 3G), 10x faster MVP, scales without rewrite.</div>
+        </div>
+        <div class="mt-6"><div class="text-[11px] font-bold uppercase text-black/40 mb-2">Deployment</div><div class="text-[12px] leading-relaxed">Web: Vercel → wds.com.gh<br/>Backend: Supabase Cloud EU West<br/>Mobile: EAS Build → APK → Play Store<br/>Domain: wds.com.gh / williamsdelivery.com.gh</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 5: Pricing & Business Model -->
+  <div class="page bg-white rounded-[32px] p-8 md:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-black/5">
+    <div class="text-[11px] font-bold tracking-[0.2em] uppercase text-black/40 mb-8">04 • Business Model • Ghana Pricing</div>
+    <div class="grid md:grid-cols-2 gap-10">
+      <div>
+        <h2 class="jakarta font-extrabold text-[32px] leading-[0.9]">Simple pricing.<br/>Customer pays delivery fee, WDS keeps 20%.</h2>
+        <div class="mt-6 bg-[#F5F5F7] rounded-2xl p-5">
+          <div class="text-[11px] font-bold uppercase tracking-wide text-black/40 mb-3">Formula (Editable by Admin)</div>
+          <code class="text-[13px] font-bold">Total = Base GHS 15 + Distance*2.5 + PackageFee + Express GHS 8</code>
+          <div class="mt-4 grid grid-cols-2 gap-2 text-[12px]">
+            <div>Document: GHS 3</div><div>Food: GHS 5</div><div>Medicine: GHS 6</div><div>Parcel/Grocery/Other: GHS 7</div><div>Express (35-50m): +GHS 8</div><div>Commission: 20% WDS / 80% Rider</div>
+          </div>
+          <div class="mt-4 p-3 bg-white rounded-xl border text-[12px]"><div class="font-bold">Example: East Legon → Osu (8.4km, Parcel)</div>15 + (8.4*2.5=21) + 7 = <span class="font-extrabold">GHS 43</span> → Rider gets GHS 34.4, WDS GHS 8.6</div>
+        </div>
+        <div class="mt-6 flex gap-3"><div class="flex-1 bg-black text-white rounded-2xl p-4"><div class="text-[11px] uppercase text-white/50">Avg Order</div><div class="text-[24px] font-extrabold">GHS 38</div><div class="text-[11px] text-white/50">Accra average</div></div><div class="flex-1 bg-[#FFC700] rounded-2xl p-4"><div class="text-[11px] uppercase text-black/60">WDS Cut</div><div class="text-[24px] font-extrabold">GHS 7.6</div><div class="text-[11px] text-black/60">Per order 20%</div></div></div>
+      </div>
+      <div>
+        <div class="bg-[#0A0A0A] text-white rounded-[24px] p-6">
+          <div class="text-[11px] uppercase tracking-wide text-white/40 mb-4">Revenue Projection • 30 Days After Launch</div>
+          <div class="space-y-3">
+            <div class="flex justify-between"><span class="text-white/60">Orders/day</span><span class="font-bold">100</span></div>
+            <div class="flex justify-between"><span class="text-white/60">Avg price</span><span class="font-bold">GHS 38</span></div>
+            <div class="flex justify-between"><span class="text-white/60">Daily revenue</span><span class="font-bold">GHS 3,800</span></div>
+            <div class="flex justify-between"><span class="text-white/60">WDS commission (20%)</span><span class="font-bold text-[#FFC700]">GHS 760/day</span></div>
+            <div class="h-[1px] bg-white/10 my-3"></div>
+            <div class="flex justify-between"><span class="text-white/60">Monthly revenue</span><span class="font-bold">GHS 114,000</span></div>
+            <div class="flex justify-between"><span class="text-white/60">WDS monthly (20%)</span><span class="font-bold text-[#FFC700] text-[18px]">GHS 22,800</span></div>
+            <div class="flex justify-between"><span class="text-white/60">Rider payout (80%)</span><span class="font-bold">GHS 91,200 (24 riders → GHS 3,800/rider/mo)</span></div>
+          </div>
+          <div class="mt-6 p-3 bg-white/5 rounded-xl border border-white/10 text-[12px] text-white/60">At 127 orders/day (current demo), WDS = GHS 28,956/mo. At 500 orders/day, WDS = GHS 114k/mo. Scales linearly.</div>
+        </div>
+        <div class="mt-6 bg-[#F5F5F7] rounded-2xl p-5">
+          <div class="text-[11px] font-bold uppercase text-black/40 mb-2">Payment Split • Ghana</div>
+          <div class="flex gap-2 text-[11px]"><span class="px-2 py-1 bg-[#FFC700] rounded-full font-bold">60% MoMo</span><span class="px-2 py-1 bg-black text-white rounded-full">25% Cash</span><span class="px-2 py-1 bg-white border rounded-full">15% Card</span></div>
+          <div class="text-[12px] text-black/60 mt-3">MTN MoMo most popular, then Vodafone Cash, AirtelTigo. Paystack handles all via one API. Cash on delivery still 25% in Ghana.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 6: Roadmap -->
+  <div class="page bg-white rounded-[32px] p-8 md:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-black/5">
+    <div class="text-[11px] font-bold tracking-[0.2em] uppercase text-black/40 mb-8">05 • Roadmap • Next 90 Days</div>
+    <h2 class="jakarta font-extrabold text-[32px] leading-[0.9]">From MVP demo to live in Accra in 2 weeks.</h2>
+    <div class="mt-10 grid md:grid-cols-3 gap-6">
+      <div class="border-2 border-black rounded-[24px] p-6 relative"><div class="absolute -top-3 left-6 px-3 py-1 bg-black text-white rounded-full text-[11px] font-bold">Week 1 • Done</div><h3 class="font-bold text-[16px] mt-2">MVP Demo + Full Stack Code</h3><ul class="text-[13px] text-black/60 mt-3 space-y-2"><li>✅ Landing + booking widget</li><li>✅ Auth phone OTP + role</li><li>✅ Customer/Rider/Admin views</li><li>✅ Price calc + map + payments UI</li><li>✅ Supabase schema + RLS + functions</li><li>✅ Expo rider app + store assets</li><li>✅ Pitch deck + deployment guide</li></ul><div class="mt-4 text-[11px] font-bold px-2 py-1 bg-[#FFC700] rounded-full inline-block">You are here • 36 files built</div></div>
+      <div class="bg-[#F5F5F7] rounded-[24px] p-6 border border-black/5"><div class="text-[11px] font-bold uppercase tracking-wide text-black/40 mb-2">Week 2 • Go Live</div><h3 class="font-bold text-[16px]">Launch in East Legon & Osu</h3><ul class="text-[13px] text-black/60 mt-3 space-y-2"><li>• Create Supabase project + run migration</li><li>• Paystack Ghana account + test MoMo</li><li>• Deploy web to Vercel → wds.com.gh</li><li>• Build APK → share via WhatsApp to 24 riders</li><li>• Onboard 2 riders, test 10 real orders</li><li>• Fix bugs, get feedback</li></ul><div class="mt-4 p-2 bg-white rounded-xl text-[11px] border"><span class="font-bold">Goal:</span> 20 orders/day, 4.8 rating, &lt;45m avg</div></div>
+      <div class="bg-[#F5F5F7] rounded-[24px] p-6 border border-black/5"><div class="text-[11px] font-bold uppercase tracking-wide text-black/40 mb-2">Month 2-3 • Scale</div><h3 class="font-bold text-[16px]">Scale to 100+ orders/day</h3><ul class="text-[13px] text-black/60 mt-3 space-y-2"><li>• Wallet + scheduled + multi-stop</li><li>• Proof photo + signature + chat</li><li>• Promo codes + referral</li><li>• Merchant portal for restaurants</li><li>• Auto-dispatch AI (nearest + rating + traffic)</li><li>• WDS Prime subscription</li><li>• Expand to Tema, Spintex, Airport</li></ul><div class="mt-4 p-2 bg-black text-white rounded-xl text-[11px]"><span class="font-bold">Goal:</span> 100 orders/day → GHS 22,800/mo WDS</div></div>
+    </div>
+    <div class="mt-8 bg-black text-white rounded-[24px] p-6 flex flex-wrap items-center justify-between gap-4"><div><div class="font-bold">What Williams needs to do now:</div><div class="text-[13px] text-white/60 mt-1">1. Approve pricing (GHS 15 base?) 2. Create Supabase + Paystack accounts (15 mins) 3. Share APK with 24 riders 4. Test with 2 riders in East Legon</div></div><div class="px-4 py-2 bg-[#FFC700] text-black rounded-full font-bold text-[13px]">Ready to launch in 2 weeks</div></div>
+  </div>
+
+  <!-- Slide 7: Demo Logins + CTA -->
+  <div class="page bg-[#FFC700] rounded-[32px] p-8 md:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.15)] min-h-[500px] flex flex-col justify-between">
+    <div>
+      <div class="text-[11px] font-bold tracking-[0.2em] uppercase text-black/60 mb-8">06 • Live Demo • Full Stack Ready</div>
+      <h2 class="jakarta font-extrabold text-[36px] md:text-[48px] leading-[0.9]">Try it now.<br/>Real auth, real orders, real map.</h2>
+      <div class="mt-8 grid md:grid-cols-3 gap-4">
+        <div class="bg-black text-white rounded-2xl p-5"><div class="text-[11px] uppercase text-white/50">Customer Demo</div><div class="font-bold mt-1">0244123456 / 123456</div><div class="text-[12px] text-white/60 mt-1">Ama Mensah • Order anything in Accra</div><div class="mt-3 text-[11px] px-2 py-1 bg-white/10 rounded-full inline-block">OTP: 123456</div></div>
+        <div class="bg-white rounded-2xl p-5 border border-black/10"><div class="text-[11px] uppercase text-black/40">Rider Demo</div><div class="font-bold mt-1">0244987654 / 123456</div><div class="text-[12px] text-black/60 mt-1">Kwame Asare • Motor AB 1234-23 • GHS 286</div><div class="mt-3 text-[11px] px-2 py-1 bg-black text-white rounded-full inline-block">Online • 4.9 ★</div></div>
+        <div class="bg-black text-white rounded-2xl p-5"><div class="text-[11px] uppercase text-white/50">Admin Demo</div><div class="font-bold mt-1">0244000000 / admin123</div><div class="text-[12px] text-white/60 mt-1">Williams • See revenue, riders, orders</div><div class="mt-3 text-[11px] px-2 py-1 bg-[#FFC700] text-black rounded-full inline-block">Full Access</div></div>
+      </div>
+    </div>
+    <div class="mt-12 flex flex-wrap items-end justify-between gap-6">
+      <div><div class="text-[12px] font-bold uppercase tracking-widest text-black/60">Links</div><div class="mt-2 space-y-1 text-[13px] font-medium"><div>🌐 Web MVP: <span class="font-bold">https://5173-xxx.e2b.app/full-mvp/</span></div><div>📱 Rider APK: <span class="font-bold">eas build --platform android --profile preview</span></div><div>🗂️ Code: <span class="font-bold">wds-fullstack/ (36 files)</span></div><div>📖 Docs: PRD, Architecture, Agents, Claude, Deployment</div></div></div>
+      <div class="text-right"><div class="jakarta font-extrabold text-[24px]">WDS • Williams Delivery Service</div><div class="text-[13px]">Accra, Ghana • wds.com.gh • 0244000000</div><div class="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full font-bold text-[13px]"><span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Production Ready • Let's Launch</div></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="no-print max-w-[1000px] mx-auto p-8 text-center text-[12px] text-black/40">Built for Williams • WDS Full Stack • Next.js + Supabase + Expo + Paystack • Accra • Print this page as PDF (Ctrl+P) to share with investors/team</div>
+
+</body>
+</html>
