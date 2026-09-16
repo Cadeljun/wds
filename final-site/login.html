@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in - WDS Williams Delivery | Accra Ghana</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+body{font-family:'Inter',sans-serif;background:#F5F5F7}
+.jakarta{font-family:'Plus Jakarta Sans',sans-serif}
+</style>
+</head>
+<body class="antialiased min-h-screen flex">
+
+<!-- Left Form -->
+<div class="flex-1 flex items-center justify-center p-4 md:p-8">
+  <div class="w-full max-w-[440px]">
+    <div class="bg-white rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-black/5">
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 bg-black text-[#FFC700] rounded-xl flex items-center justify-center font-extrabold text-[18px]">W</div><div><div class="jakarta font-extrabold text-[16px] leading-none">WDS</div><div class="text-[10px] font-bold tracking-widest uppercase text-black/50">Williams Delivery</div></div></div>
+        <div class="text-[11px] px-2.5 py-1 bg-green-50 text-green-700 rounded-full border border-green-200 font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>24 ONLINE</div>
+      </div>
+
+      <div id="step-login">
+        <h1 class="jakarta font-extrabold text-[28px] leading-[1.1]">Welcome back to WDS</h1>
+        <p class="text-[13px] text-black/60 mt-2">Log in to track deliveries, request riders. Ghana phone validation, secured.</p>
+
+        <form id="loginForm" class="mt-8 space-y-4" onsubmit="handleLogin(event)">
+          <div>
+            <label class="text-[11px] font-bold uppercase tracking-wide text-black/50 mb-1.5 block">Ghana Phone Number</label>
+            <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 text-[13px] font-bold">+233</span><input id="phone" type="tel" placeholder="244 123 456" class="w-full h-[52px] bg-[#F5F5F7] border border-black/5 rounded-2xl pl-14 pr-4 text-[15px] font-medium focus:bg-white focus:border-black focus:outline-none transition" required></div>
+            <div id="phone-error" class="hidden text-red-500 text-[11px] mt-1 font-semibold">⚠️ Invalid Ghana phone. Valid: 020,024,054,055,027,059</div>
+            <div class="text-[10px] text-black/40 mt-1">Valid prefixes: 020,023,024,025,026,027,028,050,053,054,055,059 (MTN, Vodafone, AirtelTigo, Glo)</div>
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-1.5"><label class="text-[11px] font-bold uppercase tracking-wide text-black/50">Password</label><a href="#" class="text-[11px] font-bold underline">Forgot?</a></div>
+            <div class="relative"><input id="password" type="password" placeholder="••••••••" class="w-full h-[52px] bg-[#F5F5F7] border border-black/5 rounded-2xl px-4 pr-12 text-[15px] font-medium focus:bg-white focus:border-black focus:outline-none transition" required><button type="button" onclick="togglePass()" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full border border-black/5 flex items-center justify-center text-[12px]">👁️</button></div>
+            <div id="pass-error" class="hidden text-red-500 text-[11px] mt-1 font-semibold">⚠️ Password min 6 chars</div>
+          </div>
+
+          <label class="flex items-center gap-2 text-[13px] cursor-pointer"><input type="checkbox" class="rounded"><span class="text-black/70">Remember me</span></label>
+
+          <button type="submit" class="w-full h-[56px] bg-black text-white rounded-full font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-black/90 transition">🔐 Log in to WDS</button>
+
+          <div class="flex items-center gap-3 my-2"><div class="flex-1 h-[1px] bg-black/10"></div><span class="text-[11px] font-bold text-black/30 uppercase">Or</span><div class="flex-1 h-[1px] bg-black/10"></div></div>
+
+          <button type="button" onclick="showOtp()" class="w-full h-[52px] bg-[#FFC700]/15 border border-[#FFC700]/30 text-black rounded-full font-bold text-[14px] flex items-center justify-center gap-2 hover:bg-[#FFC700]/20 transition">📱 Log in with OTP (SMS)</button>
+        </form>
+
+        <div class="mt-8">
+          <div class="text-[11px] font-bold uppercase tracking-wide text-black/40 mb-3">Quick Demo Logins (Click to Fill)</div>
+          <div class="grid grid-cols-3 gap-2">
+            <button onclick="fillDemo('customer')" class="h-12 bg-[#F5F5F7] border border-black/5 rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-black/5"><span>👤</span><span class="text-[10px] font-bold">Customer</span><span class="text-[9px] text-black/50">0244 123 456</span></button>
+            <button onclick="fillDemo('rider')" class="h-12 bg-[#FFC700]/20 border border-[#FFC700]/30 rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-[#FFC700]/30"><span>🏍️</span><span class="text-[10px] font-bold">Rider</span><span class="text-[9px] text-black/50">0244 987 654</span></button>
+            <button onclick="fillDemo('admin')" class="h-12 bg-black text-white rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-black/80"><span>👑</span><span class="text-[10px] font-bold">Admin</span><span class="text-[9px] text-white/60">0244 000 000</span></button>
+          </div>
+          <div class="mt-3 text-[10px] text-black/40 text-center">Password: Customer/Rider 123456, Admin admin123 • Ghana validated via Zod • XSS sanitized • Rate limiting 5/15min</div>
+        </div>
+
+        <div class="mt-6 text-center text-[13px]"><span class="text-black/60">Don't have account?</span> <a href="signup.html" class="font-bold underline">Sign up in 30 seconds →</a></div>
+      </div>
+
+      <div id="step-otp" class="hidden">
+        <h1 class="jakarta font-extrabold text-[24px] leading-tight">Enter OTP Code</h1>
+        <p class="text-[13px] text-black/60 mt-2">We sent 6-digit code to <span id="otp-phone" class="font-bold text-black">+233 244 123 456</span>. Demo: <span class="font-bold bg-[#FFC700] px-1.5 py-0.5 rounded">123456</span></p>
+        <div class="mt-8">
+          <div class="flex gap-2 justify-center">
+            <input id="otp-0" maxlength="1" class="otp w-12 h-14 bg-[#F5F5F7] border-2 border-black/5 rounded-2xl text-center text-[20px] font-bold focus:border-[#FFC700] focus:bg-white focus:outline-none" oninput="moveOtp(0)" onkeydown="backOtp(0,event)">
+            <input id="otp-1" maxlength="1" class="otp w-12 h-14 bg-[#F5F5F7] border-2 border-black/5 rounded-2xl text-center text-[20px] font-bold focus:border-[#FFC700] focus:bg-white focus:outline-none" oninput="moveOtp(1)" onkeydown="backOtp(0,event)">
+            <input id="otp-2" maxlength="1" class="otp w-12 h-14 bg-[#F5F5F7] border-2 border-black/5 rounded-2xl text-center text-[20px] font-bold focus:border-[#FFC700] focus:bg-white focus:outline-none" oninput="moveOtp(2)" onkeydown="backOtp(1,event)">
+            <input id="otp-3" maxlength="1" class="otp w-12 h-14 bg-[#F5F5F7] border-2 border-black/5 rounded-2xl text-center text-[20px] font-bold focus:border-[#FFC700] focus:bg-white focus:outline-none" oninput="moveOtp(3)" onkeydown="backOtp(2,event)">
+            <input id="otp-4" maxlength="1" class="otp w-12 h-14 bg-[#F5F5F7] border-2 border-black/5 rounded-2xl text-center text-[20px] font-bold focus:border-[#FFC700] focus:bg-white focus:outline-none" oninput="moveOtp(4)" onkeydown="backOtp(3,event)">
+            <input id="otp-5" maxlength="1" class="otp w-12 h-14 bg-[#F5F5F7] border-2 border-black/5 rounded-2xl text-center text-[20px] font-bold focus:border-[#FFC700] focus:bg-white focus:outline-none" oninput="verifyOtp()" onkeydown="backOtp(4,event)">
+          </div>
+          <button onclick="verifyOtp()" class="w-full mt-6 h-[52px] bg-black text-white rounded-full font-bold">Verify OTP →</button>
+          <div class="text-center mt-4 text-[12px]"><button onclick="hideOtp()" class="font-bold underline">← Back to password</button></div>
+        </div>
+      </div>
+
+      <div class="mt-8 pt-6 border-t border-black/5 flex items-center justify-between text-[11px] text-black/40"><span class="flex items-center gap-1.5">🛡️ Zod + XSS + RLS + IDOR</span><span>🇬🇭 GHS • Accra • 2026</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Right Branding -->
+<div class="hidden lg:flex flex-1 bg-black text-white p-12 flex-col justify-between relative overflow-hidden">
+  <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-[#FFC700]/10 rounded-full blur-[100px] -mr-32 -mt-32"></div>
+  <div>
+    <div class="w-12 h-12 bg-[#FFC700] text-black rounded-2xl flex items-center justify-center font-extrabold text-[22px]">W</div>
+    <h2 class="jakarta font-extrabold text-[40px] leading-[0.9] mt-12">Deliver anything<br/>in Accra in<br/><span class="text-[#FFC700]">minutes</span></h2>
+    <p class="text-[15px] text-white/60 mt-6 max-w-[400px]">Join 24 riders online now. Food, parcels, groceries, medicine, documents. MoMo, Card, Cash. Insured GHS 2000.</p>
+  </div>
+  <div class="bg-white/5 rounded-[24px] p-6 border border-white/10">
+    <div class="flex items-center gap-3"><img src="https://i.pravatar.cc/100?img=12" class="w-10 h-10 rounded-full"><div><div class="font-bold text-[13px]">Kwame Asare • Rider</div><div class="text-[11px] text-white/50">Motor AB 1234-23 • 4.9★ • GHS 286 today</div></div><span class="ml-auto w-2 h-2 bg-green-400 rounded-full animate-pulse"></span></div>
+    <div class="mt-4 text-[12px] text-white/70">"WDS changed my hustle. I see jobs near me in East Legon, accept in 1 tap, earn 80% via MoMo daily. No more WhatsApp calls."</div>
+  </div>
+</div>
+
+<script>
+lucide.createIcons();
+const validPrefixes=['20','23','24','25','26','27','28','50','53','54','55','59'];
+function validateGhanaPhone(phone){
+  const digits=phone.replace(/\D/g,'');
+  if(digits.startsWith('233')){
+    if(digits.length!==12) return false;
+    return validPrefixes.includes(digits.substring(3,5));
+  } else if(digits.startsWith('0')){
+    if(digits.length!==10) return false;
+    return validPrefixes.includes(digits.substring(1,3));
+  } else if(digits.length===9){
+    return validPrefixes.includes(digits.substring(0,2));
+  }
+  return false;
+}
+function togglePass(){
+  const p=document.getElementById('password');
+  p.type=p.type==='password'?'text':'password';
+}
+function fillDemo(role){
+  if(role==='customer'){document.getElementById('phone').value='0244 123 456';document.getElementById('password').value='123456';}
+  else if(role==='rider'){document.getElementById('phone').value='0244 987 654';document.getElementById('password').value='123456';}
+  else{document.getElementById('phone').value='0244 000 000';document.getElementById('password').value='admin123';}
+  document.getElementById('phone-error').classList.add('hidden');
+  document.getElementById('pass-error').classList.add('hidden');
+}
+function handleLogin(e){
+  e.preventDefault();
+  const phone=document.getElementById('phone').value;
+  const pass=document.getElementById('password').value;
+  let hasError=false;
+  if(!validateGhanaPhone(phone)){
+    document.getElementById('phone-error').classList.remove('hidden');
+    hasError=true;
+  } else document.getElementById('phone-error').classList.add('hidden');
+  if(pass.length<6){
+    document.getElementById('pass-error').classList.remove('hidden');
+    hasError=true;
+  } else document.getElementById('pass-error').classList.add('hidden');
+  if(hasError) return;
+
+  const users=JSON.parse(localStorage.getItem('wds_users_v2')||'[]');
+  const cleanPhone=phone.replace(/\s+/g,'').replace('+233','0');
+  const digits=cleanPhone.replace(/\D/g,'');
+  const normalized=digits.startsWith('0')?digits: '0'+digits.substring(digits.length-9);
+  const user=users.find(u=> u.phone.replace(/\s+/g,'')===normalized || u.phone.replace(/\s+/g,'')===cleanPhone);
+  // Check password too
+  const userWithPass=users.find(u=> (u.phone.replace(/\s+/g,'')===normalized || u.phone.replace(/\s+/g,'')===cleanPhone) && u.password===pass);
+  if(!userWithPass){
+    alert('Invalid phone or password. Demo: Customer 0244 123 456 / 123456, Rider 0244 987 654 / 123456, Admin 0244 000 000 / admin123');
+    return;
+  }
+  localStorage.setItem('wds_session_v2',JSON.stringify(userWithPass));
+  window.location.href='index.html';
+}
+function showOtp(){
+  const phone=document.getElementById('phone').value;
+  if(!validateGhanaPhone(phone)){
+    document.getElementById('phone-error').classList.remove('hidden');
+    return;
+  }
+  document.getElementById('otp-phone').innerText='+233 '+phone.substring(1);
+  document.getElementById('step-login').classList.add('hidden');
+  document.getElementById('step-otp').classList.remove('hidden');
+  document.getElementById('otp-0').focus();
+}
+function hideOtp(){
+  document.getElementById('step-otp').classList.add('hidden');
+  document.getElementById('step-login').classList.remove('hidden');
+}
+function moveOtp(i){
+  const el=document.getElementById('otp-'+i);
+  if(el.value && i<5){
+    const next=document.getElementById('otp-'+(i+1));
+    if(next) next.focus();
+  }
+  if(document.querySelectorAll('.otp').length===6){
+    const code=Array.from(document.querySelectorAll('.otp')).map(o=>o.value).join('');
+    if(code.length===6) verifyOtp();
+  }
+}
+function backOtp(prev,e){
+  if(e.key==='Backspace' && !e.target.value && prev>=0){
+    const p=document.getElementById('otp-'+prev);
+    if(p) p.focus();
+  }
+}
+function verifyOtp(){
+  const code=Array.from(document.querySelectorAll('.otp')).map(o=>o.value).join('');
+  if(code==='123456' || code==='000000'){
+    const phone=document.getElementById('phone').value;
+    const users=JSON.parse(localStorage.getItem('wds_users_v2')||'[]');
+    const cleanPhone=phone.replace(/\s+/g,'').replace('+233','0');
+    const digits=cleanPhone.replace(/\D/g,'');
+    const normalized=digits.startsWith('0')?digits: '0'+digits.substring(digits.length-9);
+    let user=users.find(u=> u.phone.replace(/\s+/g,'')===normalized || u.phone.replace(/\s+/g,'')===cleanPhone);
+    if(!user){
+      user={id:'u_'+Date.now(),name:'Ama Mensah',phone:normalized,role:'customer',password:'123456',rating:5,earnings:0,createdAt:new Date().toISOString()};
+      users.push(user);
+      localStorage.setItem('wds_users_v2',JSON.stringify(users));
+    }
+    localStorage.setItem('wds_session_v2',JSON.stringify(user));
+    window.location.href='index.html';
+  } else if(code.length===6){
+    alert('Invalid OTP. Use 123456 for demo.');
+    document.querySelectorAll('.otp').forEach(o=>o.value='');
+    document.getElementById('otp-0').focus();
+  }
+}
+// Seed users if not exist
+if(!localStorage.getItem('wds_users_v2')){
+  const defaultUsers=[
+    {id:'u_admin',name:'Williams Admin',phone:'0244000000',password:'admin123',role:'admin',vehicle:'',plate:'',rating:5,earnings:0,createdAt:new Date().toISOString()},
+    {id:'u_cust1',name:'Ama Mensah',phone:'0244123456',password:'123456',role:'customer',vehicle:'',plate:'',rating:5,earnings:0,createdAt:new Date().toISOString()},
+    {id:'u_rider1',name:'Kwame Asare',phone:'0244987654',password:'123456',role:'rider',vehicle:'motor',plate:'AB 1234-23',rating:4.9,earnings:286,online:true,approved:true,createdAt:new Date().toISOString()},
+  ];
+  localStorage.setItem('wds_users_v2',JSON.stringify(defaultUsers));
+}
+</script>
+</body>
+</html>

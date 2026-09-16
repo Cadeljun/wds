@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WDS - Williams Delivery Service | Full MVP</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+tailwind.config={theme:{extend:{fontFamily:{jakarta:['Plus Jakarta Sans','sans-serif'],inter:['Inter','sans-serif']},colors:{wds:{yellow:'#FFC700',black:'#0A0A0A',dark:'#141414',gray:'#F5F5F7'}}}}}
+</script>
+<style>
+body{font-family:'Inter',sans-serif;background:#F5F5F7}
+.jakarta{font-family:'Plus Jakarta Sans',sans-serif}
+.scrollbar-hide::-webkit-scrollbar{display:none}
+.pulse-ring{animation:pulse-ring 2s cubic-bezier(0.455,0.03,0.515,0.955) infinite}
+@keyframes pulse-ring{0%{transform:scale(0.8);opacity:1}100%{transform:scale(2);opacity:0}}
+input:focus{outline:none;ring:2px}
+.auth-bg{background: radial-gradient(1200px 600px at 80% -20%, rgba(255,199,0,0.15), transparent), radial-gradient(800px 400px at 0% 100%, rgba(10,10,10,0.05), transparent)}
+</style>
+</head>
+<body class="antialiased">
+
+<!-- HEADER -->
+<header class="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-black/5">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 h-[64px] flex items-center justify-between">
+    <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
+      <div class="w-9 h-9 bg-[#0A0A0A] rounded-xl flex items-center justify-center text-[#FFC700] font-extrabold jakarta text-[18px]">W</div>
+      <div><div class="jakarta font-extrabold text-[16px] leading-none tracking-tight">WDS</div><div class="text-[10px] font-semibold tracking-[0.15em] text-black/60 uppercase -mt-0.5">Williams Delivery</div></div>
+      <span class="hidden md:inline-flex ml-3 px-2.5 py-1 bg-[#FFC700]/15 rounded-full text-[11px] font-bold tracking-wide">ACCRA • MVP v2.0</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <div id="nav-guest" class="flex items-center gap-2">
+        <button onclick="openAuth('login')" class="h-9 px-4 rounded-full text-[13px] font-semibold text-black/70 hover:bg-black/5 transition">Log in</button>
+        <button onclick="openAuth('signup')" class="h-9 px-5 bg-[#0A0A0A] text-white rounded-full text-[13px] font-bold hover:bg-black transition">Sign up</button>
+      </div>
+      <div id="nav-user" class="hidden items-center gap-3">
+        <div id="role-switcher" class="hidden bg-[#F5F5F7] rounded-full p-1 md:flex gap-1">
+          <button onclick="setRoleView('customer')" id="rv-customer" class="roleview-btn px-3 py-1.5 rounded-full text-[12px] font-semibold bg-black text-white">Customer</button>
+          <button onclick="setRoleView('rider')" id="rv-rider" class="roleview-btn px-3 py-1.5 rounded-full text-[12px] font-semibold text-black/60">Rider</button>
+          <button onclick="setRoleView('admin')" id="rv-admin" class="roleview-btn px-3 py-1.5 rounded-full text-[12px] font-semibold text-black/60">Admin</button>
+        </div>
+        <div class="flex items-center gap-2 pl-2 border-l border-black/10">
+          <div class="hidden md:block text-right"><div id="user-name" class="text-[13px] font-bold leading-none">Kwame A.</div><div id="user-role" class="text-[11px] text-black/50">Rider • Online</div></div>
+          <div id="user-avatar" class="w-8 h-8 rounded-full bg-[#FFC700] flex items-center justify-center font-bold text-[13px]">K</div>
+          <button onclick="logout()" class="w-8 h-8 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- LANDING (Guest) -->
+<div id="view-landing" class="view">
+  <section class="max-w-[1440px] mx-auto px-4 md:px-8 py-8 md:py-16 grid lg:grid-cols-[1.1fr_0.9fr] gap-8 items-center">
+    <div>
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-white rounded-full border border-black/5 text-[11px] font-bold tracking-wide mb-5"><span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> 24 RIDERS ONLINE IN ACCRA NOW</div>
+      <h1 class="jakarta font-extrabold text-[36px] md:text-[64px] leading-[0.9] tracking-[-0.03em]">Deliver anything<br>in Accra in<br><span class="relative inline-block">minutes<span class="absolute bottom-2 left-0 w-full h-3 bg-[#FFC700] -z-10"></span></span></h1>
+      <p class="text-[15px] md:text-[17px] text-black/60 leading-relaxed mt-5 max-w-[520px]">Food, parcels, groceries, medicine, documents. Real riders, live tracking, pay with MTN MoMo, Vodafone Cash, Card or Cash. Built for Ghana.</p>
+      <div class="flex flex-wrap gap-3 mt-8">
+        <button onclick="openAuth('signup')" class="h-[52px] px-7 bg-[#0A0A0A] text-white rounded-full font-bold text-[14px] flex items-center gap-2"><i data-lucide="bike" class="w-5 h-5"></i> Start Delivering - Free</button>
+        <button onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})" class="h-[52px] px-7 bg-white border border-black/10 rounded-full font-bold text-[14px]">How it works</button>
+      </div>
+      <div class="flex items-center gap-6 mt-10">
+        <div class="flex -space-x-2"><img src="https://i.pravatar.cc/100?img=1" class="w-8 h-8 rounded-full border-2 border-white"><img src="https://i.pravatar.cc/100?img=2" class="w-8 h-8 rounded-full border-2 border-white"><img src="https://i.pravatar.cc/100?img=3" class="w-8 h-8 rounded-full border-2 border-white"><div class="w-8 h-8 rounded-full bg-[#FFC700] border-2 border-white flex items-center justify-center text-[11px] font-bold">+21</div></div>
+        <div class="text-[13px]"><span class="font-bold">4.9/5</span> <span class="text-black/50">from 312 deliveries today</span></div>
+      </div>
+    </div>
+    <div class="relative">
+      <div class="bg-white rounded-[32px] p-3 shadow-[0_30px_80px_rgba(0,0,0,0.12)] border border-black/5">
+        <div class="bg-[#0A0A0A] rounded-[24px] p-6 text-white relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-[200px] h-[200px] bg-[#FFC700]/20 rounded-full blur-[50px] -mr-10 -mt-10"></div>
+          <div class="flex justify-between items-center mb-6"><span class="text-[11px] font-bold tracking-widest uppercase text-white/50">Live Price Check</span><span class="px-2 py-1 bg-green-500/20 text-green-300 rounded-full text-[10px] font-bold border border-green-500/20">LIVE</span></div>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 bg-white/10 rounded-2xl p-3"><div class="w-2 h-2 bg-[#FFC700] rounded-full"></div><input value="East Legon, American House" class="bg-transparent flex-1 text-[13px] font-medium" readonly><span class="text-[10px] text-white/40 uppercase font-bold">Pickup</span></div>
+            <div class="flex items-center gap-3 bg-white rounded-2xl p-3 text-black"><div class="w-2 h-2 bg-black rounded-full"></div><input value="Osu, Oxford Street" class="bg-transparent flex-1 text-[13px] font-bold" readonly><span class="text-[10px] text-black/40 uppercase font-bold">Drop-off</span></div>
+          </div>
+          <div class="mt-5 flex items-end justify-between"><div><div class="text-[11px] text-white/50 uppercase font-bold tracking-wide">You pay</div><div class="jakarta text-[36px] font-extrabold leading-none">GHS 42</div></div><div class="text-right"><div class="text-[12px] bg-[#FFC700] text-black px-3 py-1 rounded-full font-bold">8.4 km • 22 mins</div><div class="text-[11px] text-white/50 mt-1">Parcel • Express</div></div></div>
+          <button onclick="openAuth('signup')" class="w-full mt-5 h-12 bg-[#FFC700] text-black rounded-full font-extrabold text-[14px]">Request Rider Now →</button>
+        </div>
+        <div class="p-4 grid grid-cols-3 gap-3 text-center">
+          <div><div class="w-10 h-10 mx-auto bg-[#F5F5F7] rounded-full flex items-center justify-center mb-1"><i data-lucide="smartphone" class="w-5 h-5"></i></div><div class="text-[11px] font-bold">MoMo</div><div class="text-[10px] text-black/50">MTN, Voda, Airtel</div></div>
+          <div><div class="w-10 h-10 mx-auto bg-[#F5F5F7] rounded-full flex items-center justify-center mb-1"><i data-lucide="map-pin" class="w-5 h-5"></i></div><div class="text-[11px] font-bold">Live Track</div><div class="text-[10px] text-black/50">Real-time map</div></div>
+          <div><div class="w-10 h-10 mx-auto bg-[#F5F5F7] rounded-full flex items-center justify-center mb-1"><i data-lucide="shield-check" class="w-5 h-5"></i></div><div class="text-[11px] font-bold">Insured</div><div class="text-[10px] text-black/50">Up to GHS 2000</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works" class="bg-white border-y border-black/5">
+    <div class="max-w-[1440px] mx-auto px-4 md:px-8 py-12 md:py-20">
+      <div class="grid md:grid-cols-3 gap-8">
+        <div><div class="w-12 h-12 bg-[#0A0A0A] text-[#FFC700] rounded-2xl flex items-center justify-center font-extrabold text-[18px] mb-4">1</div><h3 class="jakarta font-bold text-[18px]">Order in 30 seconds</h3><p class="text-[14px] text-black/60 mt-2 leading-relaxed">Enter pickup, drop-off, what you're sending. Get instant price. No calls needed.</p></div>
+        <div><div class="w-12 h-12 bg-[#FFC700] text-black rounded-2xl flex items-center justify-center font-extrabold text-[18px] mb-4">2</div><h3 class="jakarta font-bold text-[18px]">Rider assigned instantly</h3><p class="text-[14px] text-black/60 mt-2 leading-relaxed">Nearest rider in East Legon, Osu, Kaneshie gets notified. First to accept wins. Track live.</p></div>
+        <div><div class="w-12 h-12 bg-[#F5F5F7] rounded-2xl flex items-center justify-center font-extrabold text-[18px] mb-4">3</div><h3 class="jakarta font-bold text-[18px]">Delivered & pay</h3><p class="text-[14px] text-black/60 mt-2 leading-relaxed">Pay with MoMo, Card or Cash. Proof photo, rating, receipt via SMS. Done.</p></div>
+      </div>
+      <div class="mt-12 bg-[#F5F5F7] rounded-[24px] p-6 flex flex-wrap items-center justify-between gap-4"><div class="flex items-center gap-3"><div class="w-10 h-10 bg-[#0A0A0A] rounded-full flex items-center justify-center text-white"><i data-lucide="users" class="w-5 h-5"></i></div><div><div class="font-bold text-[14px]">For Williams' Rider Team</div><div class="text-[12px] text-black/50">Already have 24 riders? Onboard them in 1 click, track earnings, payouts via MoMo daily.</div></div></div><button onclick="openAuth('signup')" class="h-10 px-5 bg-[#0A0A0A] text-white rounded-full text-[13px] font-bold">Onboard Riders →</button></div>
+    </div>
+  </section>
+</div>
+
+<!-- CUSTOMER VIEW (Logged in) -->
+<div id="view-customer" class="view hidden">
+  <section class="max-w-[1440px] mx-auto px-4 md:px-8 py-6 grid lg:grid-cols-[1.15fr_0.85fr] gap-6">
+    <div class="bg-white rounded-[24px] md:rounded-[32px] p-5 md:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.06)] border border-black/[0.04]">
+      <div class="flex items-start justify-between mb-6">
+        <div><h1 class="jakarta font-extrabold text-[24px] md:text-[32px] leading-[0.95] tracking-[-0.02em]">Deliver anything<br>in <span class="relative">Accra<i class="absolute -bottom-1.5 left-0 w-full h-2 bg-[#FFC700] -z-10"></i></span> now.</h1><p class="text-black/60 text-[13px] mt-2">Welcome <span id="cust-welcome-name" class="font-bold text-black">Ama</span> • <span id="cust-welcome-phone">0244 123 456</span></p></div>
+        <div class="hidden md:flex items-center gap-1.5 bg-[#0A0A0A] text-white rounded-full px-3 py-1.5 text-[11px] font-bold"><span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> 24 RIDERS ONLINE</div>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-[11px] font-bold tracking-[0.12em] uppercase text-black/50 mb-2.5 block">What are you sending?</label>
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-2" id="pkg-grid"></div>
+      </div>
+
+      <div class="space-y-3">
+        <div class="relative">
+          <div class="absolute left-4 top-[22px] bottom-[22px] w-[2px] bg-black/10"></div>
+          <div class="absolute left-[13px] top-[18px] w-3 h-3 bg-[#FFC700] border-[3px] border-white rounded-full shadow"></div>
+          <div class="absolute left-[13px] bottom-[18px] w-3 h-3 bg-[#0A0A0A] border-[3px] border-white rounded-full shadow"></div>
+          <div class="pl-10 space-y-3">
+            <div class="relative"><input id="pickup" oninput="calcPrice(); updateMapMarkers();" placeholder="Pickup location" value="East Legon, American House" class="w-full h-[52px] bg-[#F5F5F7] border border-black/[0.06] rounded-2xl pl-4 pr-10 text-[14px] font-medium"><button class="absolute right-3 top-3 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm border border-black/5"><i data-lucide="map-pin" class="w-4 h-4 text-black/50"></i></button><div class="text-[10px] font-bold tracking-widest text-black/40 uppercase mt-1 ml-1">Pickup</div></div>
+            <div class="relative"><input id="dropoff" oninput="calcPrice(); updateMapMarkers();" placeholder="Where to deliver?" value="Osu, Oxford Street" class="w-full h-[52px] bg-white border-2 border-[#0A0A0A] rounded-2xl pl-4 pr-10 text-[14px] font-semibold"><button class="absolute right-3 top-3 w-7 h-7 bg-[#0A0A0A] rounded-full flex items-center justify-center"><i data-lucide="navigation" class="w-4 h-4 text-white"></i></button><div class="text-[10px] font-bold tracking-widest text-black/40 uppercase mt-1 ml-1">Drop-off</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-3 mt-5">
+        <input id="itemDesc" placeholder="What exactly? e.g. 'Jollof + chicken, small box'" class="h-[48px] bg-[#F5F5F7] border border-black/5 rounded-2xl px-4 text-[13px] font-medium w-full">
+        <div class="flex gap-2"><input id="recipientName" placeholder="Recipient name" class="h-[48px] bg-[#F5F5F7] border border-black/5 rounded-2xl px-4 text-[13px] font-medium w-1/2"><input id="recipientPhone" placeholder="0244 000 000" class="h-[48px] bg-[#F5F5F7] border border-black/5 rounded-2xl px-4 text-[13px] font-medium w-1/2"></div>
+      </div>
+
+      <div class="flex items-center justify-between mt-5 p-3 rounded-2xl bg-[#FFC700]/10 border border-[#FFC700]/20">
+        <div class="flex items-center gap-2.5"><div class="w-8 h-8 bg-[#FFC700] rounded-full flex items-center justify-center"><i data-lucide="zap" class="w-4 h-4"></i></div><div><div class="text-[13px] font-bold">Express delivery</div><div class="text-[11px] text-black/60">Deliver in 35-50 mins • +GHS 8</div></div></div>
+        <label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="express" onchange="calcPrice()" class="sr-only peer"><div class="w-10 h-6 bg-black/10 rounded-full peer peer-checked:bg-[#0A0A0A] transition"></div><div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-4 shadow"></div></label>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <div class="bg-[#0A0A0A] rounded-[24px] md:rounded-[32px] p-6 md:p-7 text-white relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-[180px] h-[180px] bg-[#FFC700]/20 rounded-full blur-[40px] -mr-12 -mt-12 pointer-events-none"></div>
+        <div class="flex items-center justify-between mb-5"><div class="text-[11px] font-bold tracking-[0.15em] uppercase text-white/50">Price Estimate</div><div class="px-2.5 py-1 bg-white/10 rounded-full text-[10px] font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-400 rounded-full"></span>LIVE PRICING</div></div>
+        <div class="flex items-end gap-2"><div class="jakarta text-[42px] font-extrabold leading-none tracking-tight" id="priceGHS">GHS 42</div><div class="text-[13px] text-white/60 mb-2 font-medium">/ delivery</div></div>
+        <div class="mt-4 space-y-2 text-[13px]"><div class="flex justify-between text-white/60"><span id="distanceLabel">8.4 km • 22 mins</span><span>GHS 27 base</span></div><div class="flex justify-between text-white/60"><span>Package • <span id="pkgLabel">Parcel</span></span><span id="weightLabel">GHS 7</span></div><div class="flex justify-between text-white/60"><span>Express fee</span><span id="expressLabel">GHS 0</span></div><div class="h-[1px] bg-white/10 my-3"></div><div class="flex justify-between font-semibold text-white"><span>You pay</span><span id="totalPay">GHS 42</span></div></div>
+        <div class="mt-6"><div class="text-[11px] font-bold tracking-[0.12em] uppercase text-white/40 mb-3">Payment Method</div><div class="grid grid-cols-3 gap-2" id="pay-grid"></div><div id="momo-options" class="grid grid-cols-3 gap-2 mt-2"><button class="text-[10px] bg-[#FFC700] text-black font-bold rounded-full py-1.5">MTN</button><button class="text-[10px] bg-white/10 border border-white/10 rounded-full py-1.5 font-semibold">Vodafone</button><button class="text-[10px] bg-white/10 border border-white/10 rounded-full py-1.5 font-semibold">AirtelTigo</button></div></div>
+        <button onclick="placeOrder()" class="w-full mt-6 h-[56px] bg-[#FFC700] text-black rounded-full font-extrabold jakarta text-[15px] flex items-center justify-center gap-2 hover:brightness-110 transition tracking-wide"><i data-lucide="bike" class="w-5 h-5"></i> Request Rider Now</button>
+        <div class="text-[11px] text-white/40 text-center mt-3 flex items-center justify-center gap-1.5"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i>Paystack secured • Insured up to GHS 2,000</div>
+      </div>
+      <div class="bg-white rounded-[24px] md:rounded-[32px] p-2 shadow-[0_20px_60px_rgba(0,0,0,0.06)] border border-black/[0.04]"><div id="map" class="w-full h-[260px] rounded-[20px] md:rounded-[24px] overflow-hidden"></div><div class="p-3 flex items-center justify-between"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-[#F5F5F7] flex items-center justify-center"><i data-lucide="route" class="w-4 h-4"></i></div><div><div class="text-[12px] font-bold">Fastest route via N1</div><div class="text-[11px] text-black/50">Avoiding traffic at Tetteh Quarshie</div></div></div><span class="text-[11px] font-bold px-2.5 py-1 bg-green-50 text-green-700 rounded-full border border-green-200">Live traffic</span></div></div>
+    </div>
+  </section>
+
+  <section class="max-w-[1440px] mx-auto px-4 md:px-8 pb-12">
+    <div id="activeTracking" class="hidden bg-white rounded-[24px] p-6 border border-[#FFC700]/30 shadow-[0_10px_40px_rgba(0,0,0,0.05)] mb-8">
+      <div class="flex items-center justify-between mb-4"><h3 class="jakarta font-bold text-[16px] flex items-center gap-2"><span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Tracking Order <span id="trackingId">#WDS-92</span></h3><button onclick="document.getElementById('activeTracking').classList.add('hidden')" class="text-[12px] font-semibold text-black/50">Close ×</button></div>
+      <div class="grid md:grid-cols-[320px_1fr] gap-6"><div class="space-y-4"><div class="flex gap-3"><div class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center"><i data-lucide="user-check" class="w-5 h-5"></i></div><div><div class="text-[13px] font-bold">Kwame A. • Rider</div><div class="text-[11px] text-black/60">Motor • AB 1234-23 • 4.9 ★</div><div class="text-[11px] font-semibold mt-1 flex gap-2"><span class="px-2 py-0.5 bg-[#FFC700] rounded-full">On the way</span><span class="px-2 py-0.5 bg-black/5 rounded-full">Call: 0244 123 456</span></div></div></div><div class="relative pl-8"><div class="absolute left-2 top-2 bottom-2 w-[2px] bg-black/10"></div><div id="trackingSteps" class="space-y-6 text-[13px]"></div></div></div><div class="bg-[#F5F5F7] rounded-2xl p-4"><div id="trackingMap" class="w-full h-[220px] rounded-xl overflow-hidden"></div></div></div>
+    </div>
+    <h3 class="jakarta font-extrabold text-[18px] mb-4">Your Deliveries</h3>
+    <div class="grid md:grid-cols-3 gap-4" id="orderHistory"></div>
+  </section>
+</div>
+
+<!-- RIDER VIEW -->
+<div id="view-rider" class="view hidden">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 py-6 grid lg:grid-cols-[1fr_380px] gap-6">
+    <div>
+      <div class="bg-[#0A0A0A] text-white rounded-[28px] p-6 flex items-center justify-between mb-6">
+        <div class="flex items-center gap-4"><div class="relative"><img id="rider-avatar-img" src="https://i.pravatar.cc/100?img=12" class="w-14 h-14 rounded-full border-2 border-[#FFC700]"><span class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-[#0A0A0A] rounded-full"></span></div><div><div id="rider-name" class="jakarta font-bold text-[18px]">Kwame Asare • Rider</div><div class="text-[13px] text-white/60">Level 4 • 312 deliveries • <span id="rider-vehicle">Motorbike</span></div></div></div>
+        <div class="text-right"><div class="text-[11px] tracking-widest uppercase text-white/40 font-bold">Today's Earnings</div><div class="jakarta text-[28px] font-extrabold" id="rider-earnings">GHS 286</div><label class="flex items-center gap-2 mt-2 justify-end cursor-pointer"><span class="text-[12px] font-semibold">Online</span><input type="checkbox" checked class="sr-only peer"><div class="w-11 h-6 bg-white/15 rounded-full peer-checked:bg-green-400 relative transition"><div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></div></div></label></div>
+      </div>
+      <div class="flex items-center justify-between mb-4"><h2 class="jakarta font-extrabold text-[20px]">Available Jobs <span class="text-black/30 text-[14px]">• 6 near you</span></h2><div class="flex gap-2"><button class="h-8 px-3 bg-white rounded-full text-[12px] font-semibold border border-black/10">Nearest first</button><button class="w-8 h-8 bg-[#FFC700] rounded-full flex items-center justify-center"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button></div></div>
+      <div id="riderJobs" class="space-y-3"></div>
+    </div>
+    <div class="space-y-4">
+      <div class="bg-white rounded-[24px] p-5 border border-black/5"><h3 class="jakarta font-bold text-[15px] mb-3">My Active Delivery</h3><div id="myActive" class="text-[13px] text-black/50 text-center py-8 border border-dashed border-black/10 rounded-2xl">No active delivery.<br>Accept a job to start.</div></div>
+      <div class="bg-white rounded-[24px] p-2 border border-black/5"><div id="riderMap" class="w-full h-[320px] rounded-[18px] overflow-hidden"></div></div>
+      <div class="bg-white rounded-[24px] p-5 border border-black/5"><h3 class="font-bold text-[13px] mb-3">Today's Summary</h3><div class="grid grid-cols-3 gap-3 text-center"><div class="bg-[#F5F5F7] rounded-2xl p-3"><div class="text-[20px] font-extrabold jakarta">7</div><div class="text-[10px] uppercase font-bold text-black/50 tracking-wide">Trips</div></div><div class="bg-[#F5F5F7] rounded-2xl p-3"><div class="text-[20px] font-extrabold jakarta">42km</div><div class="text-[10px] uppercase font-bold text-black/50 tracking-wide">Distance</div></div><div class="bg-[#FFC700] rounded-2xl p-3"><div class="text-[20px] font-extrabold jakarta">4.9</div><div class="text-[10px] uppercase font-bold text-black/70 tracking-wide">Rating</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN VIEW -->
+<div id="view-admin" class="view hidden">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 py-6">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6"><h1 class="jakarta font-extrabold text-[24px]">Admin Dashboard <span class="font-medium text-black/40 text-[14px] ml-2">WDS Operations • Accra</span></h1><div class="flex gap-2"><div class="bg-white px-4 py-2 rounded-full border border-black/5 text-[12px] font-semibold flex items-center gap-2"><span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>Live • <span id="admin-online-count">24</span> Riders Online</div><button onclick="exportCSV()" class="bg-[#0A0A0A] text-white px-4 py-2 rounded-full text-[12px] font-bold">Export CSV</button></div></div>
+    <div class="grid md:grid-cols-4 gap-4 mb-6"><div class="bg-white rounded-[20px] p-5 border border-black/5"><div class="text-[11px] font-bold tracking-widest uppercase text-black/40 mb-2">Revenue Today</div><div class="jakarta text-[26px] font-extrabold">GHS 4,280</div><div class="text-[12px] text-green-600 font-semibold mt-1">+18% vs yesterday</div></div><div class="bg-white rounded-[20px] p-5 border border-black/5"><div class="text-[11px] font-bold tracking-widest uppercase text-black/40 mb-2">Orders Today</div><div class="jakarta text-[26px] font-extrabold" id="admin-orders-count">127</div><div class="text-[12px] text-black/50 mt-1">23 pending assignment</div></div><div class="bg-white rounded-[20px] p-5 border border-black/5"><div class="text-[11px] font-bold tracking-widest uppercase text-black/40 mb-2">Avg Delivery Time</div><div class="jakarta text-[26px] font-extrabold">42m</div><div class="text-[12px] text-orange-600 font-semibold mt-1">2m slower today</div></div><div class="bg-[#FFC700] rounded-[20px] p-5 border border-black/5"><div class="text-[11px] font-bold tracking-widest uppercase text-black/60 mb-2">Commission</div><div class="jakarta text-[26px] font-extrabold">GHS 856</div><div class="text-[12px] text-black/70 mt-1">WDS earnings (20%)</div></div></div>
+    <div class="grid lg:grid-cols-[1.3fr_0.7fr] gap-6">
+      <div class="bg-white rounded-[24px] p-5 border border-black/5"><div class="flex items-center justify-between mb-4"><h3 class="jakarta font-bold text-[16px]">Live Orders</h3><div class="flex gap-2 text-[11px]"><span class="px-2.5 py-1 bg-black text-white rounded-full font-bold">All</span><span class="px-2.5 py-1 bg-black/5 rounded-full">Pending</span><span class="px-2.5 py-1 bg-black/5 rounded-full">On the way</span></div></div><div class="overflow-auto"><table class="w-full text-[13px]"><thead class="text-[11px] uppercase tracking-widest text-black/40 border-b border-black/5"><tr><th class="text-left py-2 font-bold">Order ID</th><th class="text-left py-2 font-bold">Customer</th><th class="text-left py-2 font-bold">Route</th><th class="text-left py-2 font-bold">Rider</th><th class="text-left py-2 font-bold">Price</th><th class="text-left py-2 font-bold">Status</th></tr></thead><tbody id="adminOrders"></tbody></table></div></div>
+      <div class="space-y-6"><div class="bg-white rounded-[24px] p-5 border border-black/5"><h3 class="jakarta font-bold text-[15px] mb-4">Rider Fleet • Accra</h3><div class="space-y-3" id="adminRiders"></div></div><div class="bg-white rounded-[24px] p-5 border border-black/5"><h3 class="jakarta font-bold text-[15px] mb-4">All Users</h3><div class="space-y-2 max-h-[260px] overflow-auto" id="adminUsers"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div id="auth-modal" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeAuth()"></div>
+  <div class="relative min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-[440px] rounded-[32px] shadow-[0_30px_80px_rgba(0,0,0,0.3)] overflow-hidden auth-bg">
+      <div class="p-8">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-2"><div class="w-8 h-8 bg-black text-[#FFC700] rounded-xl flex items-center justify-center font-extrabold">W</div><span class="jakarta font-bold">WDS</span></div>
+          <button onclick="closeAuth()" class="w-8 h-8 bg-black/5 rounded-full flex items-center justify-center hover:bg-black/10"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+
+        <div id="auth-step-1">
+          <h2 id="auth-title" class="jakarta font-extrabold text-[26px] leading-[1.1] tracking-tight">Join WDS in 30 seconds</h2>
+          <p id="auth-subtitle" class="text-[13px] text-black/60 mt-2">Deliver anything in Accra. Pay with MoMo, Card or Cash.</p>
+
+          <div class="flex bg-[#F5F5F7] rounded-full p-1 mt-6">
+            <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 h-9 rounded-full text-[13px] font-bold bg-white shadow-sm">Log in</button>
+            <button id="tab-signup" onclick="switchAuthTab('signup')" class="flex-1 h-9 rounded-full text-[13px] font-bold text-black/60">Sign up</button>
+          </div>
+
+          <!-- LOGIN FORM -->
+          <form id="form-login" class="mt-6 space-y-3" onsubmit="handleLogin(event)">
+            <div><label class="text-[11px] font-bold uppercase tracking-wide text-black/50 mb-1.5 block">Phone Number</label><div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 text-[13px] font-bold">+233</span><input id="login-phone" type="tel" placeholder="244 123 456" class="w-full h-[48px] bg-[#F5F5F7] border border-black/5 rounded-2xl pl-14 pr-4 text-[14px] font-medium" required></div></div>
+            <div><label class="text-[11px] font-bold uppercase tracking-wide text-black/50 mb-1.5 block">Password</label><input id="login-password" type="password" placeholder="••••••••" class="w-full h-[48px] bg-[#F5F5F7] border border-black/5 rounded-2xl px-4 text-[14px] font-medium" required></div>
+            <div class="flex items-center justify-between text-[12px]"><label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rounded"><span class="text-black/60">Remember me</span></label><a href="#" class="font-bold text-black underline">Forgot?</a></div>
+            <button type="submit" class="w-full h-[52px] bg-[#0A0A0A] text-white rounded-full font-bold text-[14px] flex items-center justify-center gap-2"><i data-lucide="log-in" class="w-4 h-4"></i> Log in to WDS</button>
+            <div class="text-center text-[11px] text-black/40 mt-3">Demo logins: Customer 0244123456 / 123456 • Rider 0244987654 / 123456 • Admin 0244000000 / admin123</div>
+          </form>
+
+          <!-- SIGNUP FORM -->
+          <form id="form-signup" class="mt-6 space-y-3 hidden" onsubmit="handleSignup(event)">
+            <div class="grid grid-cols-2 gap-3">
+              <div><label class="text-[11px] font-bold uppercase tracking-wide text-black/50 mb-1.5 block">Full Name</label><input id="signup-name" type="text" placeholder="Ama Mensah" class="w-full h-[48px] bg-[#F5F5F7] border border-black/5 rounded-2xl px-4 text-[14px] font-medium" required></div>
+              <div><label class="text-[11px] font-bold uppercase tracking-wide text-black/50 mb-1.5 block">I am a...</label><select id="signup-role" onchange="toggleRiderFields()" class="w-full h-[48px] bg-[#F5F5F7] border border-black/5 rounded-2xl px-3 text-[14px] font-medium"><option value="customer">Customer</option><option value="rider">Rider (Driver)</option></select></div>
+            </div>
+            <div><label class="text-[11px] font-bold uppercase tracking-wide text-black/50 mb-1.5 block">Phone Number (Ghana)</label><div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 text-[13px] font-bold">+233</span><input id="signup-phone" type="tel" placeholder="244 123 456" class="w-full h-[48px] bg-[#F5F5F7] border border-black/5 rounded-2xl pl-14 pr-4 text-[14px] font-medium" required></div><div class="text-[10px] text-black/40 mt-1">We'll send OTP to this number. Use MTN, Vodafone, AirtelTigo.</div></div>
+            <div id="rider-extra" class="hidden grid grid-cols-2 gap-3 p-3 bg-[#FFC700]/10 rounded-2xl border border-[#FFC700]/20">
+              <div><label class="text-[10px] font-bold uppercase tracking-wide text-black/60 mb-1 block">Vehicle Type</label><select id="signup-vehicle" class="w-full h-[40px] bg-white border border-black/5 rounded-xl px-3 text-[13px]"><option value="motor">Motorbike</option><option value="bicycle">Bicycle</option><option value="car">Car</option><option value="van">Van</option></select></div>
+              <div><label class="text-[10px] font-bold uppercase tracking-wide text-black/60 mb-1 block">License Plate</label><input id="signup-plate" type="text" placeholder="AB 1234-23" class="w-full h-[40px] bg-white border border-black/5 rounded-xl px-3 text-[13px]"></div>
+            </div>
+            <div><label class="text-[11px] font-bold uppercase tracking-wide text-black/50 mb-1.5 block">Create Password</label><input id="signup-password" type="password" placeholder="At least 6 characters" class="w-full h-[48px] bg-[#F5F5F7] border border-black/5 rounded-2xl px-4 text-[14px] font-medium" required minlength="6"></div>
+            <label class="flex items-start gap-2 text-[11px] text-black/60 mt-2"><input type="checkbox" required class="mt-0.5"><span>I agree to WDS Terms, Privacy, and that my data is protected under Ghana Data Protection Act. I will be paid via MoMo.</span></label>
+            <button type="submit" class="w-full h-[52px] bg-[#FFC700] text-black rounded-full font-extrabold text-[14px] flex items-center justify-center gap-2">Create Account & Send OTP →</button>
+          </form>
+
+          <div class="mt-6 flex items-center gap-3"><div class="flex-1 h-[1px] bg-black/10"></div><span class="text-[11px] font-bold text-black/30 uppercase tracking-wide">Or continue with</span><div class="flex-1 h-[1px] bg-black/10"></div></div>
+          <div class="grid grid-cols-2 gap-2 mt-4">
+            <button onclick="fillDemo('customer')" class="h-11 bg-[#F5F5F7] border border-black/5 rounded-full text-[12px] font-bold flex items-center justify-center gap-2"><i data-lucide="user" class="w-4 h-4"></i> Demo Customer</button>
+            <button onclick="fillDemo('rider')" class="h-11 bg-[#F5F5F7] border border-black/5 rounded-full text-[12px] font-bold flex items-center justify-center gap-2"><i data-lucide="bike" class="w-4 h-4"></i> Demo Rider</button>
+          </div>
+        </div>
+
+        <div id="auth-step-2" class="hidden">
+          <h2 class="jakarta font-extrabold text-[24px] leading-tight">Enter OTP Code</h2>
+          <p class="text-[13px] text-black/60 mt-2">We sent a 6-digit code to <span id="otp-phone-display" class="font-bold text-black">+233 244 123 456</span>. For demo, use <span class="font-bold bg-[#FFC700] px-1.5 py-0.5 rounded">123456</span></p>
+          <div class="mt-6">
+            <div class="flex gap-2 justify-center">
+              <input id="otp-1" maxlength="1" class="otp-input w-12 h-14 bg-[#F5F5F7] border-2 border-black/5 rounded-2xl text-center text-[20px] font-bold focus:border-[#FFC700] focus:bg-white" oninput="moveOTP(this,2)" onkeydown="backOTP(event,1)">
+              <input id="otp-2" maxlength="1" class="otp-input w-12 h-14 bg-[#F5F5F7] border-2 border-black/5 rounded-2xl text-center text-[20px] font-bold focus:border-[#FFC700] focus:bg-white" oninput="moveOTP(this,3)" onkeydown="backOTP(event,1)">
+              <input id="otp-3" maxlength="1" class="otp-input w-12 h-14 bg-[#F5F5F7] border-2 border-black/5 rounded-2xl text-center text-[20px] font-bold focus:border-[#FFC700] focus:bg-white" oninput="moveOTP(this,4)" onkeydown="backOTP(event,2)">
+              <input id="otp-4" maxlength="1" class="otp-input w-12 h-14 bg-[#F5F5F7] border-2 border-black/5 rounded-2xl text-center text-[20px] font-bold focus:border-[#FFC700] focus:bg-white" oninput="moveOTP(this,5)" onkeydown="backOTP(event,3)">
+              <input id="otp-5" maxlength="1" class="otp-input w-12 h-14 bg-[#F5F5F7] border-2 border-black/5 rounded-2xl text-center text-[20px] font-bold focus:border-[#FFC700] focus:bg-white" oninput="moveOTP(this,6)" onkeydown="backOTP(event,4)">
+              <input id="otp-6" maxlength="1" class="otp-input w-12 h-14 bg-[#F5F5F7] border-2 border-black/5 rounded-2xl text-center text-[20px] font-bold focus:border-[#FFC700] focus:bg-white" oninput="verifyOTP()" onkeydown="backOTP(event,5)">
+            </div>
+            <div id="otp-error" class="hidden mt-3 text-[12px] text-red-600 bg-red-50 border border-red-200 rounded-full px-3 py-2 text-center font-semibold">Invalid code. Try 123456 for demo.</div>
+            <button onclick="verifyOTP()" class="w-full mt-6 h-[52px] bg-[#0A0A0A] text-white rounded-full font-bold text-[14px]">Verify & Continue →</button>
+            <div class="text-center mt-4 text-[12px]"><button onclick="resendOTP()" class="font-bold underline">Resend code</button><span class="text-black/40"> • </span><button onclick="backToStep1()" class="font-bold underline">Change phone</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-[#F5F5F7] px-8 py-4 flex items-center justify-between text-[11px] text-black/50"><span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Secured by Supabase + Paystack</span><span>🇬🇭 Ghana • GHS</span></div>
+    </div>
+  </div>
+</div>
+
+<footer class="mt-12 border-t border-black/5 bg-white">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[12px] text-black/50"><div class="flex items-center gap-2"><div class="w-6 h-6 bg-black text-[#FFC700] rounded-lg flex items-center justify-center font-extrabold jakarta">W</div><span class="font-bold text-black">WDS Williams Delivery Service</span><span>• Accra, Ghana • Full MVP v2.0 with Auth</span></div><div class="flex items-center gap-4"><span>Paystack • MTN MoMo • Google Maps • Supabase</span><span class="px-2 py-1 bg-[#FFC700]/20 rounded-full text-black font-bold">LIVE</span></div></div>
+</footer>
+
+<script>
+// ICONS
+lucide.createIcons();
+
+// STORAGE KEYS
+const LS_USERS='wds_users_v2', LS_ORDERS='wds_orders_v2', LS_SESSION='wds_session_v2';
+
+// SEED DATA
+const defaultUsers=[
+  {id:'u_admin', name:'Williams Admin', phone:'0244000000', password:'admin123', role:'admin', vehicle:'', plate:'', rating:5, earnings:0, createdAt:new Date().toISOString()},
+  {id:'u_cust1', name:'Ama Mensah', phone:'0244123456', password:'123456', role:'customer', vehicle:'', plate:'', rating:5, earnings:0, createdAt:new Date().toISOString()},
+  {id:'u_rider1', name:'Kwame Asare', phone:'0244987654', password:'123456', role:'rider', vehicle:'motor', plate:'AB 1234-23', rating:4.9, earnings:286, online:true, approved:true, createdAt:new Date().toISOString()},
+  {id:'u_rider2', name:'Abena Tetteh', phone:'0200123456', password:'123456', role:'rider', vehicle:'motor', plate:'GR 567-21', rating:4.8, earnings:142, online:true, approved:true, createdAt:new Date().toISOString()},
+];
+const defaultOrders=[
+  {id:'WDS-91', customerId:'u_cust1', customerName:'Ama Mensah', pickup:'Madina Market', dropoff:'Legon Campus', type:'Food', price:'GHS 35', status:'Delivered', rider:'Ama K.', riderId:'u_rider2', date:'Today 10:42am', createdAt:Date.now()-3600000*2},
+  {id:'WDS-90', customerId:'u_cust1', customerName:'Ama Mensah', pickup:'Kaneshie Market', dropoff:'Dansoman', type:'Grocery', price:'GHS 52', status:'On the way', rider:'Kwame A.', riderId:'u_rider1', date:'Today 9:18am', createdAt:Date.now()-3600000*5},
+  {id:'WDS-89', customerId:'u_cust1', customerName:'Ama Mensah', pickup:'Osu', dropoff:'Airport Residential', type:'Document', price:'GHS 28', status:'Pending', rider:'-', riderId:'', date:'Yesterday', createdAt:Date.now()-86400000},
+];
+
+function loadLS(key, fallback){ try{ const v=localStorage.getItem(key); return v?JSON.parse(v):fallback; }catch{return fallback} }
+function saveLS(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+
+let users = loadLS(LS_USERS, defaultUsers);
+let orders = loadLS(LS_ORDERS, defaultOrders);
+let currentUser = loadLS(LS_SESSION, null);
+let pendingSignup = null; // temp store during OTP
+
+// Ensure defaults exist
+if(!localStorage.getItem(LS_USERS)){ saveLS(LS_USERS, defaultUsers); users=defaultUsers; }
+if(!localStorage.getItem(LS_ORDERS)){ saveLS(LS_ORDERS, defaultOrders); orders=defaultOrders; }
+
+// STATE
+let pkgType='parcel', payType='momo', roleView='customer';
+let map, pickupMarker, dropoffMarker, routeLine, riderMap, trackingMap;
+
+const accraSpots={
+  'east legon':[5.6365,-0.1645],
+  'osu':[5.5560,-0.1760],
+  'kaneshie':[5.5700,-0.2330],
+  'madina':[5.6680,-0.1660],
+  'airport':[5.6030,-0.1770],
+  'circle':[5.5600,-0.2050],
+  'tema':[5.6690,0.0000],
+  'dansoman':[5.5400,-0.2680],
+  'legon':[5.6500,-0.1860],
+  'teshie':[5.5800,-0.1000],
+};
+function getCoords(addr){ const a=(addr||'').toLowerCase(); for(let k in accraSpots) if(a.includes(k)) return accraSpots[k]; return [5.6037 + (Math.random()-0.5)*0.2, -0.1870 + (Math.random()-0.5)*0.2]; }
+
+// AUTH UI
+function openAuth(tab='login'){ document.getElementById('auth-modal').classList.remove('hidden'); switchAuthTab(tab); document.getElementById('auth-step-1').classList.remove('hidden'); document.getElementById('auth-step-2').classList.add('hidden'); lucide.createIcons(); }
+function closeAuth(){ document.getElementById('auth-modal').classList.add('hidden'); }
+function switchAuthTab(tab){ const isLogin=tab==='login'; document.getElementById('form-login').classList.toggle('hidden', !isLogin); document.getElementById('form-signup').classList.toggle('hidden', isLogin); document.getElementById('tab-login').className = isLogin? 'flex-1 h-9 rounded-full text-[13px] font-bold bg-white shadow-sm' : 'flex-1 h-9 rounded-full text-[13px] font-bold text-black/60'; document.getElementById('tab-signup').className = !isLogin? 'flex-1 h-9 rounded-full text-[13px] font-bold bg-white shadow-sm' : 'flex-1 h-9 rounded-full text-[13px] font-bold text-black/60'; document.getElementById('auth-title').innerText = isLogin? 'Welcome back to WDS' : 'Join WDS in 30 seconds'; document.getElementById('auth-subtitle').innerText = isLogin? 'Log in to track deliveries and request riders.' : 'Deliver anything in Accra. Pay with MoMo, Card or Cash.'; }
+function toggleRiderFields(){ const role=document.getElementById('signup-role').value; document.getElementById('rider-extra').classList.toggle('hidden', role!=='rider'); }
+function fillDemo(type){ if(type==='customer'){ document.getElementById('login-phone').value='0244123456'; document.getElementById('login-password').value='123456'; } else if(type==='rider'){ document.getElementById('login-phone').value='0244987654'; document.getElementById('login-password').value='123456'; } else if(type==='admin'){ document.getElementById('login-phone').value='0244000000'; document.getElementById('login-password').value='admin123'; } switchAuthTab('login'); }
+
+function handleLogin(e){ e.preventDefault(); const phone=document.getElementById('login-phone').value.replace(/\s+/g,'').replace('+233','0'); const pass=document.getElementById('login-password').value; const user=users.find(u=> u.phone.replace(/\s+/g,'')===phone && u.password===pass); if(!user){ alert('Invalid phone or password. Demo: Customer 0244123456 / 123456, Rider 0244987654 / 123456, Admin 0244000000 / admin123'); return; } currentUser=user; saveLS(LS_SESSION, currentUser); closeAuth(); afterLogin(); }
+
+function handleSignup(e){ e.preventDefault(); const name=document.getElementById('signup-name').value.trim(); const phoneRaw=document.getElementById('signup-phone').value.replace(/\s+/g,''); const phone=phoneRaw.startsWith('0')?phoneRaw:'0'+phoneRaw; const role=document.getElementById('signup-role').value; const vehicle=document.getElementById('signup-vehicle').value; const plate=document.getElementById('signup-plate').value; const password=document.getElementById('signup-password').value; if(users.find(u=>u.phone===phone)){ alert('Phone already registered. Please log in.'); switchAuthTab('login'); return; } pendingSignup={ id:'u_'+Date.now(), name, phone, role, vehicle: role==='rider'?vehicle:'', plate: role==='rider'?plate:'', password, rating:5, earnings:0, online: role==='rider', approved: role==='rider'?true:true, createdAt:new Date().toISOString() }; document.getElementById('otp-phone-display').innerText='+233 '+phone.substring(1); document.getElementById('auth-step-1').classList.add('hidden'); document.getElementById('auth-step-2').classList.remove('hidden'); document.getElementById('otp-1').focus(); // simulate sending OTP console.log('OTP sent: 123456'); }
+
+function moveOTP(el,next){ if(el.value.length===1 && next<=6){ const n=document.getElementById('otp-'+next); if(n) n.focus(); } if(document.querySelectorAll('.otp-input').length===6){ const code=Array.from(document.querySelectorAll('.otp-input')).map(i=>i.value).join(''); if(code.length===6) verifyOTP(); } }
+function backOTP(e,prev){ if(e.key==='Backspace' && !e.target.value && prev>=1){ document.getElementById('otp-'+prev).focus(); } }
+function verifyOTP(){ const code=Array.from(document.querySelectorAll('.otp-input')).map(i=>i.value).join(''); if(code==='123456' || code==='000000'){ if(pendingSignup){ users.push(pendingSignup); saveLS(LS_USERS, users); currentUser=pendingSignup; saveLS(LS_SESSION, currentUser); pendingSignup=null; closeAuth(); afterLogin(); document.querySelectorAll('.otp-input').forEach(i=>i.value=''); } } else if(code.length===6){ document.getElementById('otp-error').classList.remove('hidden'); setTimeout(()=>document.getElementById('otp-error').classList.add('hidden'),3000); } }
+function resendOTP(){ alert('OTP resent: 123456 (demo)'); }
+function backToStep1(){ document.getElementById('auth-step-2').classList.add('hidden'); document.getElementById('auth-step-1').classList.remove('hidden'); }
+
+function logout(){ currentUser=null; localStorage.removeItem(LS_SESSION); goHome(); renderNav(); }
+function goHome(){ document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden')); if(!currentUser){ document.getElementById('view-landing').classList.remove('hidden'); } else { afterLogin(); } window.scrollTo({top:0,behavior:'smooth'}); }
+
+function afterLogin(){ renderNav(); document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden')); if(currentUser.role==='admin'){ roleView='admin'; document.getElementById('view-admin').classList.remove('hidden'); setRoleView('admin'); } else if(currentUser.role==='rider'){ roleView='rider'; document.getElementById('view-rider').classList.remove('hidden'); setRoleView('rider'); } else { roleView='customer'; document.getElementById('view-customer').classList.remove('hidden'); setRoleView('customer'); } setTimeout(()=>{ initMaps(); renderAll(); lucide.createIcons(); },100); }
+
+function renderNav(){ const guest=document.getElementById('nav-guest'); const userNav=document.getElementById('nav-user'); if(!currentUser){ guest.classList.remove('hidden'); guest.classList.add('flex'); userNav.classList.add('hidden'); userNav.classList.remove('flex'); document.getElementById('view-landing').classList.remove('hidden'); document.getElementById('view-customer').classList.add('hidden'); document.getElementById('view-rider').classList.add('hidden'); document.getElementById('view-admin').classList.add('hidden'); } else { guest.classList.add('hidden'); guest.classList.remove('flex'); userNav.classList.remove('hidden'); userNav.classList.add('flex'); document.getElementById('user-name').innerText=currentUser.name; document.getElementById('user-role').innerText=currentUser.role.charAt(0).toUpperCase()+currentUser.role.slice(1)+' • '+(currentUser.role==='rider'?(currentUser.online?'Online':'Offline'):'Accra'); document.getElementById('user-avatar').innerText=currentUser.name.charAt(0).toUpperCase(); document.getElementById('cust-welcome-name').innerText=currentUser.name.split(' ')[0]; document.getElementById('cust-welcome-phone').innerText=currentUser.phone; document.getElementById('rider-name').innerText=currentUser.name+' • Rider'; document.getElementById('rider-vehicle').innerText=currentUser.vehicle? currentUser.vehicle+' • '+currentUser.plate : 'Motorbike'; document.getElementById('rider-earnings').innerText='GHS '+(currentUser.earnings||0); const rs=document.getElementById('role-switcher'); if(currentUser.role==='admin'){ rs.classList.remove('hidden'); rs.classList.add('flex'); } else { rs.classList.add('hidden'); rs.classList.remove('flex'); } } lucide.createIcons(); }
+
+function setRoleView(r){ roleView=r; document.querySelectorAll('.roleview-btn').forEach(b=> b.className='roleview-btn px-3 py-1.5 rounded-full text-[12px] font-semibold text-black/60'); const active=document.getElementById('rv-'+r); if(active) active.className='roleview-btn px-3 py-1.5 rounded-full text-[12px] font-semibold bg-black text-white'; document.querySelectorAll('.view').forEach(v=>{ if(v.id.startsWith('view-') && v.id!=='view-landing') v.classList.add('hidden'); }); document.getElementById('view-'+r).classList.remove('hidden'); setTimeout(()=>{ if(map) map.invalidateSize(); if(riderMap) riderMap.invalidateSize(); },100); renderAll(); }
+
+// PACKAGE & PAY
+const pkgTypes=[{id:'parcel',label:'Parcel',icon:'package'},{id:'food',label:'Food',icon:'utensils'},{id:'grocery',label:'Grocery',icon:'shopping-basket'},{id:'medicine',label:'Medicine',icon:'pill'},{id:'document',label:'Document',icon:'file-text'},{id:'other',label:'Other',icon:'more-horizontal'}];
+function renderPkgGrid(){ const g=document.getElementById('pkg-grid'); if(!g) return; g.innerHTML=pkgTypes.map(p=> `<button onclick="selectPackage(this,'${p.id}')" class="pkg-btn ${p.id===pkgType?'active bg-[#0A0A0A] text-white border-black':'bg-white hover:bg-black/[0.03] border-black/10'} rounded-2xl p-3 flex flex-col items-center gap-2 border"><span class="w-8 h-8 rounded-full ${p.id===pkgType?'bg-white/10':'bg-black/5'} flex items-center justify-center"><i data-lucide="${p.icon}" class="w-4 h-4"></i></span><span class="text-[11px] font-semibold">${p.label}</span></button>`).join(''); lucide.createIcons(); }
+const payTypes=[{id:'momo',label:'MoMo',icon:'smartphone'},{id:'card',label:'Card',icon:'credit-card'},{id:'cash',label:'Cash',icon:'banknote'}];
+function renderPayGrid(){ const g=document.getElementById('pay-grid'); if(!g) return; g.innerHTML=payTypes.map(p=> `<button onclick="selectPay(this,'${p.id}')" class="pay-btn ${p.id===payType?'active bg-white text-black border-2 border-white':'bg-white/10 hover:bg-white/15 border border-white/10'} rounded-2xl py-3 px-2 flex flex-col items-center gap-1.5"><i data-lucide="${p.icon}" class="w-5 h-5"></i><span class="text-[10px] font-bold">${p.label}</span></button>`).join(''); lucide.createIcons(); }
+function selectPackage(el,type){ pkgType=type; document.querySelectorAll('.pkg-btn').forEach(b=> b.className='pkg-btn bg-white hover:bg-black/[0.03] border-black/10 rounded-2xl p-3 flex flex-col items-center gap-2 border'); el.className='pkg-btn active bg-[#0A0A0A] text-white border-black rounded-2xl p-3 flex flex-col items-center gap-2 border'; calcPrice(); renderPkgGrid(); }
+function selectPay(el,type){ payType=type; document.querySelectorAll('.pay-btn').forEach(b=> b.className='pay-btn bg-white/10 hover:bg-white/15 border border-white/10 rounded-2xl py-3 px-2 flex flex-col items-center gap-1.5'); el.className='pay-btn active bg-white text-black rounded-2xl py-3 px-2 flex flex-col items-center gap-1.5 border-2 border-white'; document.getElementById('momo-options').style.display=type==='momo'?'grid':'none'; lucide.createIcons(); }
+
+// PRICE
+function calcPrice(){ const pAddr=document.getElementById('pickup')?.value||''; const dAddr=document.getElementById('dropoff')?.value||''; const p=getCoords(pAddr); const d=getCoords(dAddr); const dx=p[0]-d[0], dy=p[1]-d[1]; const km=Math.max(2, Math.min(35, Math.round(Math.sqrt(dx*dx+dy*dy)*111*10)/10)); const mins=Math.round(km*2.2+8); let base=15, perKm=2.5, pkgFee=pkgType==='food'?5:pkgType==='grocery'?7:pkgType==='medicine'?6:pkgType==='document'?3:7; let express=document.getElementById('express')?.checked?8:0; let total=Math.round(base+km*perKm+pkgFee+express); const el1=document.getElementById('priceGHS'); if(el1) el1.innerText=`GHS ${total}`; const el2=document.getElementById('totalPay'); if(el2) el2.innerText=`GHS ${total}`; const el3=document.getElementById('distanceLabel'); if(el3) el3.innerText=`${km} km • ${mins} mins`; const el4=document.getElementById('pkgLabel'); if(el4) el4.innerText=pkgType.charAt(0).toUpperCase()+pkgType.slice(1); const el5=document.getElementById('weightLabel'); if(el5) el5.innerText=`GHS ${pkgFee}`; const el6=document.getElementById('expressLabel'); if(el6) el6.innerText=`GHS ${express}`; }
+
+// MAPS
+function initMaps(){ try{ if(!map && document.getElementById('map')){ map=L.map('map',{zoomControl:false}).setView([5.6037,-0.1870],12); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map); updateMapMarkers(); } if(!riderMap && document.getElementById('riderMap')){ riderMap=L.map('riderMap',{zoomControl:false}).setView([5.6037,-0.1870],12); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(riderMap); Object.values(accraSpots).forEach(c=>{ L.marker(c,{icon:L.divIcon({html:'<div class="w-8 h-8 bg-[#0A0A0A] rounded-full flex items-center justify-center text-[10px] text-white font-bold shadow">🏍️</div>',className:''})}).addTo(riderMap); }); } }catch(e){ console.log('map init',e); } }
+function updateMapMarkers(){ if(!map) return; const p=getCoords(document.getElementById('pickup')?.value||'East Legon'); const d=getCoords(document.getElementById('dropoff')?.value||'Osu'); if(pickupMarker) map.removeLayer(pickupMarker); if(dropoffMarker) map.removeLayer(dropoffMarker); if(routeLine) map.removeLayer(routeLine); pickupMarker=L.marker(p,{icon:L.divIcon({html:'<div class="w-3 h-3 bg-[#FFC700] border-2 border-white rounded-full shadow"></div>',className:''})}).addTo(map); dropoffMarker=L.marker(d,{icon:L.divIcon({html:'<div class="w-3 h-3 bg-black border-2 border-white rounded-full shadow"></div>',className:''})}).addTo(map); routeLine=L.polyline([p,d],{color:'#FFC700',weight:4,opacity:0.9}).addTo(map); map.fitBounds([p,d],{padding:[30,30]}); }
+
+// ORDERS
+function renderAll(){ renderPkgGrid(); renderPayGrid(); renderCustomerHistory(); renderRiderJobs(); renderAdmin(); }
+function renderCustomerHistory(){ const cont=document.getElementById('orderHistory'); if(!cont) return; let filtered=orders; if(currentUser && currentUser.role==='customer'){ filtered=orders.filter(o=> o.customerId===currentUser.id || o.customerName===currentUser.name); } cont.innerHTML=filtered.map(o=> `<div class="bg-white rounded-[20px] p-4 border border-black/5 hover:shadow-lg transition cursor-pointer" onclick="openTracking('${o.id}')"><div class="flex justify-between items-start mb-3"><span class="text-[11px] font-bold px-2.5 py-1 rounded-full ${o.status==='Delivered'?'bg-green-50 text-green-700 border border-green-200':o.status==='On the way'?'bg-[#FFC700] text-black':'bg-black/5 text-black/60'}">${o.status}</span><span class="text-[11px] text-black/40">${o.date}</span></div><div class="text-[13px] font-bold">${o.pickup} → ${o.dropoff}</div><div class="text-[12px] text-black/50 mt-1">${o.type} • ${o.price} • Rider: ${o.rider}</div><div class="mt-3 flex gap-2"><span class="text-[11px] bg-[#F5F5F7] px-2.5 py-1 rounded-full font-semibold">${o.id}</span><span class="text-[11px] bg-[#0A0A0A] text-white px-2.5 py-1 rounded-full">Track</span></div></div>`).join('') || '<div class="text-[13px] text-black/50 col-span-3">No orders yet. Create your first delivery above!</div>'; }
+function renderRiderJobs(){ const cont=document.getElementById('riderJobs'); if(!cont) return; const jobs=[{id:'WDS-89', from:'Osu, Oxford St', to:'Airport Residential Area', fee:'GHS 28', dist:'3.2km', type:'Document', urgent:true},{id:'WDS-93', from:'East Legon, Bawaleshie', to:'Madina, Zongo Junction', fee:'GHS 38', dist:'6.1km', type:'Parcel', urgent:false},{id:'WDS-94', from:'Kaneshie Market', to:'Dansoman Exhibition', fee:'GHS 52', dist:'8.4km', type:'Grocery', urgent:false},{id:'WDS-95', from:'Labone, Coffee Shop', to:'Ridge, Hospital', fee:'GHS 31', dist:'4.5km', type:'Medicine', urgent:true},{id:'WDS-96', from:'Spintex Road', to:'Teshie Nungua', fee:'GHS 44', dist:'7.8km', type:'Food', urgent:false},]; cont.innerHTML=jobs.map(j=> `<div class="bg-white rounded-[22px] p-4 border ${j.urgent?'border-[#FFC700]':'border-black/5'} flex gap-4 items-center"><div class="w-12 h-12 rounded-2xl bg-[#F5F5F7] flex items-center justify-center text-[11px] font-bold">${j.type[0]}</div><div class="flex-1"><div class="flex items-center gap-2"><span class="text-[12px] font-bold">${j.id}</span>${j.urgent?'<span class="text-[9px] bg-red-500 text-white px-1.5 py-0.5 rounded-full font-bold">URGENT</span>':''}<span class="text-[11px] text-black/40">${j.dist} • ${j.type}</span></div><div class="text-[13px] font-semibold mt-1 leading-tight">${j.from} → ${j.to}</div><div class="text-[11px] text-black/50 mt-1">Customer: 0244 567 890 • Cash + MoMo</div></div><div class="text-right"><div class="jakarta font-extrabold text-[16px]">${j.fee}</div><button onclick="acceptJob('${j.id}','${j.from}','${j.to}','${j.fee}')" class="mt-2 h-8 px-4 bg-[#0A0A0A] text-white rounded-full text-[12px] font-bold">Accept</button></div></div>`).join(''); }
+function renderAdmin(){ const tbody=document.getElementById('adminOrders'); if(tbody){ tbody.innerHTML=orders.map(o=> `<tr class="border-b border-black/[0.04] hover:bg-black/[0.02]"><td class="py-3 font-bold">${o.id}</td><td class="py-3 text-[12px]">${o.customerName||'-'}</td><td class="py-3"><span class="font-medium">${o.pickup}</span> <span class="text-black/40">→</span> <span class="font-medium">${o.dropoff}</span></td><td class="py-3">${o.rider}</td><td class="py-3 font-bold">${o.price}</td><td class="py-3"><span class="px-2.5 py-1 rounded-full text-[11px] font-bold ${o.status==='Delivered'?'bg-green-50 text-green-700':o.status==='On the way'?'bg-[#FFC700] text-black':o.status==='Picked up'?'bg-blue-50 text-blue-700':'bg-black/5'}">${o.status}</span></td></tr>`).join(''); } const ridersDiv=document.getElementById('adminRiders'); if(ridersDiv){ const riders=users.filter(u=>u.role==='rider'); ridersDiv.innerHTML=riders.map(r=> `<div class="flex items-center gap-3"><img src="https://i.pravatar.cc/100?img=${Math.floor(Math.random()*50)+1}" class="w-9 h-9 rounded-full"><div class="flex-1"><div class="text-[13px] font-bold">${r.name} <span class="text-[11px] font-normal text-black/40">★ ${r.rating}</span></div><div class="text-[11px] text-black/50">${r.vehicle||'motor'} • ${r.plate||''} • ${r.online?'Online':'Offline'} • GHS ${r.earnings}</div></div><span class="w-2 h-2 rounded-full ${r.online?'bg-green-500':'bg-black/20'}"></span></div>`).join(''); } const usersDiv=document.getElementById('adminUsers'); if(usersDiv){ usersDiv.innerHTML=users.map(u=> `<div class="flex items-center justify-between p-2 bg-[#F5F5F7] rounded-xl"><div><div class="text-[13px] font-bold">${u.name} <span class="text-[10px] px-1.5 py-0.5 rounded-full ${u.role==='admin'?'bg-black text-white':u.role==='rider'?'bg-[#FFC700] text-black':'bg-white border'}">${u.role}</span></div><div class="text-[11px] text-black/50">${u.phone} • ${new Date(u.createdAt).toLocaleDateString()}</div></div><div class="text-[11px] font-bold">${u.role==='rider'?'GHS '+(u.earnings||0):''}</div></div>`).join(''); document.getElementById('admin-orders-count').innerText=orders.length; document.getElementById('admin-online-count').innerText=users.filter(u=>u.role==='rider' && u.online).length; } }
+
+function placeOrder(){ if(!currentUser){ openAuth('signup'); return; } const pickup=document.getElementById('pickup').value; const dropoff=document.getElementById('dropoff').value; const desc=document.getElementById('itemDesc').value; const rName=document.getElementById('recipientName').value; const rPhone=document.getElementById('recipientPhone').value; if(!pickup||!dropoff){ alert('Please enter pickup and drop-off'); return; } const total=document.getElementById('totalPay').innerText; const newId='WDS-'+(100+orders.length); const newOrder={ id:newId, customerId:currentUser.id, customerName:currentUser.name, pickup, dropoff, type:pkgType, description:desc, recipientName:rName, recipientPhone:rPhone, price:total, paymentMethod:payType, status:'On the way', rider:'Kwame A.', riderId:'u_rider1', date:'Now • '+new Date().toLocaleTimeString(), createdAt:Date.now() }; orders.unshift(newOrder); saveLS(LS_ORDERS, orders); renderAll(); openTracking(newId); }
+
+function openTracking(id){ document.getElementById('activeTracking').classList.remove('hidden'); document.getElementById('trackingId').innerText=id; document.getElementById('trackingSteps').innerHTML=`<div class="flex gap-3"><div class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div><div><div class="font-bold">Order confirmed</div><div class="text-black/50 text-[11px]">Just now • Rider assigned</div></div></div><div class="flex gap-3"><div class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div><div><div class="font-bold">Picked up</div><div class="text-black/50 text-[11px]">East Legon • 2 mins ago</div></div></div><div class="flex gap-3"><div class="w-6 h-6 rounded-full bg-[#FFC700] flex items-center justify-center relative"><div class="w-2 h-2 bg-black rounded-full animate-ping"></div><div class="absolute w-2 h-2 bg-black rounded-full"></div></div><div><div class="font-bold">On the way • 8 mins away</div><div class="text-black/50 text-[11px]">Kwame is coming via N1 • Live traffic</div><button class="mt-2 text-[11px] bg-[#0A0A0A] text-white px-3 py-1 rounded-full font-bold">Call Rider</button></div></div><div class="flex gap-3 opacity-40"><div class="w-6 h-6 rounded-full border-2 border-black/20"></div><div><div class="font-bold">Delivered</div><div class="text-black/50 text-[11px]">Estimated 12:20 PM</div></div></div>`; lucide.createIcons(); setTimeout(()=>{ const trackMapDiv=document.getElementById('trackingMap'); if(trackMapDiv){ trackMapDiv.innerHTML=''; trackingMap=L.map('trackingMap',{zoomControl:false}).setView([5.6037,-0.1870],13); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(trackingMap); const p=getCoords(document.getElementById('pickup').value); const d=getCoords(document.getElementById('dropoff').value); const mid=[(p[0]+d[0])/2,(p[1]+d[1])/2]; L.polyline([p,d],{color:'#0A0A0A',weight:5,opacity:0.15}).addTo(trackingMap); L.polyline([p,d],{color:'#FFC700',weight:4}).addTo(trackingMap); L.marker(p).addTo(trackingMap); L.marker(d).addTo(trackingMap); L.marker(mid,{icon:L.divIcon({html:'<div class="relative"><div class="w-10 h-10 bg-[#0A0A0A] rounded-full flex items-center justify-center text-white shadow-lg">🏍️</div><div class="absolute -inset-1 bg-[#FFC700] rounded-full -z-10 pulse-ring"></div></div>',className:''})}).addTo(trackingMap); trackingMap.fitBounds([p,d],{padding:[20,20]}); } },100); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function acceptJob(id,from,to,fee){ if(!currentUser || currentUser.role!=='rider'){ alert('Please log in as rider to accept jobs. Demo rider: 0244987654 / 123456'); openAuth('login'); return; } document.getElementById('myActive').innerHTML=`<div class="flex justify-between items-start"><div><div class="text-[12px] font-bold px-2 py-1 bg-[#FFC700] rounded-full inline-block mb-2">${id} • ${fee}</div><div class="text-[13px] font-bold leading-tight">${from} → ${to}</div><div class="text-[11px] text-black/50 mt-1">Customer: 0244 567 890</div></div><span class="text-[10px] bg-green-50 text-green-700 px-2 py-1 rounded-full border border-green-200 font-bold">Active</span></div><div class="grid grid-cols-3 gap-2 mt-4"><button onclick="updateRiderStatus('Picked up')" class="h-9 bg-[#0A0A0A] text-white rounded-full text-[11px] font-bold">Picked up</button><button onclick="updateRiderStatus('On the way')" class="h-9 bg-[#FFC700] text-black rounded-full text-[11px] font-bold">On the way</button><button onclick="updateRiderStatus('Delivered')" class="h-9 bg-green-600 text-white rounded-full text-[11px] font-bold">Delivered</button></div><div class="mt-3 flex gap-2"><button class="flex-1 h-9 bg-black/5 rounded-full text-[11px] font-bold flex items-center justify-center gap-1"><i data-lucide="phone" class="w-3 h-3"></i> Call</button><button class="flex-1 h-9 bg-black/5 rounded-full text-[11px] font-bold flex items-center justify-center gap-1"><i data-lucide="navigation" class="w-3 h-3"></i> Navigate</button></div>`; lucide.createIcons(); currentUser.earnings=(currentUser.earnings||0)+ Math.floor(parseInt(fee.replace(/\D/g,''))*0.8); saveLS(LS_USERS, users.map(u=> u.id===currentUser.id?currentUser:u)); saveLS(LS_SESSION, currentUser); document.getElementById('rider-earnings').innerText='GHS '+currentUser.earnings; }
+function updateRiderStatus(s){ alert('Status updated to: '+s+' (In real app, customer sees this live via Supabase Realtime)'); }
+function exportCSV(){ const csv=['OrderID,Customer,Pickup,Dropoff,Price,Status,Rider,Date', ...orders.map(o=> `${o.id},${o.customerName},${o.pickup},${o.dropoff},${o.price},${o.status},${o.rider},${o.date}`)].join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='wds-orders.csv'; a.click(); }
+
+// INIT
+window.onload=()=>{ renderNav(); if(currentUser){ afterLogin(); } else { document.getElementById('view-landing').classList.remove('hidden'); } renderPkgGrid(); renderPayGrid(); calcPrice(); lucide.createIcons(); setTimeout(()=>{ initMaps(); },300); };
+window.addEventListener('resize',()=>{ if(map) map.invalidateSize(); if(riderMap) riderMap.invalidateSize(); });
+</script>
+</body>
+</html>
