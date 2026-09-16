@@ -1,0 +1,188 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Users collection - extends Firebase Auth
+    // Privileged column: role (customer/rider/admin) - must NOT be self-editable!
+    match /users/{userId} {
+      // Anyone can read? No - only own + admin can read
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Create: only own ID
+      allow create: if isOwner(userId) && 
+        request.resource.data.keys().hasAll(['phone', 'full_name', 'role']) &&
+        request.resource.data.role in ['customer', 'rider'] && // Cannot self-create as admin!
+        request.resource.data.phone is string &&
+        request.resource.data.full_name is string;
+
+      // Update: ONLY safe columns - full_name only, NOT role!
+      // BEFORE (BROKEN): allow update: if isOwner(userId) → allows role=admin escalation!
+      // AFTER (FIXED): Check which fields are being updated
+      allow update: if isOwner(userId) && 
+        // Only allow updating full_name, not role, phone, created_at
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['full_name']) &&
+        request.resource.data.full_name is string &&
+        request.resource.data.full_name.size() >= 2 &&
+        request.resource.data.full_name.size() <= 100;
+
+      // Admin can update any user including role (via server-side only in real app, but for demo allow admin)
+      allow update: if isAdmin() && 
+        request.resource.data.role in ['customer', 'rider', 'admin'];
+
+      allow delete: if isAdmin();
+    }
+
+    // Riders collection - 24 riders team
+    // Privileged: is_approved, rating, total_deliveries, total_earnings, last_seen - NOT self-editable
+    // Safe: vehicle_type, license_plate, current_lat, current_lng, status
+    match /riders/{riderId} {
+      // Anyone can view online approved riders (for assignment)
+      allow read: if resource.data.is_approved == true && resource.data.status == 'online';
+      
+      // Rider can view own profile
+      allow read: if isOwner(riderId);
+      
+      // Admin can view all
+      allow read: if isAdmin();
+
+      // Create: only own ID, cannot self-approve!
+      allow create: if isOwner(riderId) &&
+        request.resource.data.vehicle_type in ['motor', 'bicycle', 'car', 'van'] &&
+        request.resource.data.is_approved == false && // Cannot self-approve!
+        request.resource.data.rating == 5.0 && // Cannot set own rating!
+        request.resource.data.total_earnings == 0; // Cannot set own earnings!
+
+      // Update: ONLY safe columns for riders
+      allow update: if isOwner(riderId) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['vehicle_type', 'license_plate', 'current_lat', 'current_lng', 'status']) &&
+        request.resource.data.vehicle_type in ['motor', 'bicycle', 'car', 'van'];
+
+      // Admin can manage all including privileged columns
+      allow write: if isAdmin();
+    }
+
+    // Orders collection - Core delivery orders (most sensitive)
+    // Privileged: price, customer_id, rider_id, distance_km, payment_status, paystack_ref, order_code - NOT client-editable
+    // Safe: status, proof_photo_url (with value restrictions)
+    match /orders/{orderId} {
+      // Customer can view own orders
+      allow read: if isAuthenticated() && resource.data.customer_id == request.auth.uid;
+      
+      // Rider can view pending orders (to accept) + assigned
+      allow read: if isAuthenticated() && 
+        (resource.data.status == 'pending' || resource.data.rider_id == request.auth.uid);
+      
+      // Admin can view all
+      allow read: if isAdmin();
+
+      // Customer can create own orders
+      allow create: if isAuthenticated() && 
+        request.resource.data.customer_id == request.auth.uid &&
+        request.resource.data.status == 'pending' &&
+        request.resource.data.price is number && // Server should calculate price, but for demo allow
+        request.resource.data.pickup_address is string &&
+        request.resource.data.dropoff_address is string;
+
+      // Customers can update own pending to cancelled only
+      allow update: if isAuthenticated() && 
+        resource.data.customer_id == request.auth.uid &&
+        resource.data.status == 'pending' &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']) &&
+        request.resource.data.status == 'cancelled';
+
+      // Riders can update assigned orders status to picked_up/on_the_way/delivered
+      allow update: if isAuthenticated() &&
+        resource.data.rider_id == request.auth.uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'proof_photo_url']) &&
+        request.resource.data.status in ['picked_up', 'on_the_way', 'delivered'];
+
+      // Admin full access
+      allow write: if isAdmin();
+    }
+
+    // Payments collection - Paystack Ghana transactions
+    // No direct client writes - only via Cloud Functions (paystackWebhook)
+    match /payments/{paymentId} {
+      // Customer can view own payments via orders
+      allow read: if isAuthenticated() && 
+        exists(/databases/$(database)/documents/orders/$(resource.data.order_id)) &&
+        get(/databases/$(database)/documents/orders/$(resource.data.order_id)).data.customer_id == request.auth.uid;
+      
+      allow read: if isAdmin();
+
+      // No client create/update/delete - only Cloud Functions with admin SDK
+      allow create, update, delete: if false;
+      // In production, use Firebase Admin SDK in Cloud Functions to bypass rules
+      // Or allow if isAdmin() for admin dashboard server-side
+      allow create, update: if isAdmin();
+    }
+
+    // Rider locations - time-series live tracking
+    match /rider_locations/{locationId} {
+      // Rider can insert own location
+      allow create: if isAuthenticated() && request.resource.data.rider_id == request.auth.uid;
+      
+      // Rider can view own locations
+      allow read: if isAuthenticated() && resource.data.rider_id == request.auth.uid;
+      
+      // Customer can view assigned rider location if order status is accepted/picked_up/on_the_way
+      // This requires checking orders collection - Firestore rules can do get() but limited
+      // For simplicity, allow if customer has an order with that rider_id and status in [...]
+      // In production, better to use Cloud Function to check orders join
+      allow read: if isAuthenticated() && 
+        exists(/databases/$(database)/documents/orders/$(request.query.orderId)) || // Simplified check
+        isAdmin();
+
+      // Admin can view all
+      allow read: if isAdmin();
+
+      // No update/delete - only create, cleanup via Cloud Function cron
+      allow update, delete: if false;
+      allow delete: if isAdmin();
+    }
+
+    // Settings - pricing config
+    match /settings/{settingId} {
+      // Anyone can read pricing
+      allow read: if true;
+
+      // Only admin can write (server-side)
+      allow write: if isAdmin();
+    }
+
+    // Enquiries - contact form
+    match /enquiries/{enquiryId} {
+      allow create: if true; // Public can create enquiries
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Newsletter
+    match /newsletter/{emailId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // User roles - separate privileged table (alternative pattern)
+    // Only service_role / admin SDK can write, authenticated can read own
+    match /user_roles/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if false; // Only Admin SDK
+      allow write: if isAdmin(); // Admin can via server-side
+    }
+  }
+}
