@@ -1,0 +1,15 @@
+# Netlify _redirects file - Fixes 404 on williamsds.netlify.app
+# This is the simplest fix for SPA - must be in publish directory (WDS-Final-Site)
+
+/api/*  /.netlify/functions/:splat  200
+/login  /login.html  200
+/signup /signup.html  200
+/auth/login  /login.html  200
+/auth/signup  /signup.html  200
+/about  /index.html  200
+/pricing  /index.html  200
+/contact  /index.html  200
+/compare  /index.html  200
+/privacy  /index.html  200
+/rider-join  /index.html  200
+/*  /index.html  200

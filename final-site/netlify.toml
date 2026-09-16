@@ -1,0 +1,9 @@
+# Netlify config for final-site inside wds-fullstack repo
+[build]
+  command = "echo 'Static site - no build'"
+  publish = "."
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

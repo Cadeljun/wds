@@ -1,0 +1,52 @@
+# Netlify config for WDS Williams Delivery Service
+# Root config - for wds-fullstack repo
+
+[build]
+  # For Next.js app in web/ folder
+  base = "web"
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_VERSION = "10"
+
+# Next.js plugin handles SSR/SSG automatically
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Redirects for SPA fallback - must be after static files
+# For Next.js, plugin handles this, but we add explicit fallback for safety
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = { Role = ["admin"] }
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(self), camera=()"
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://wds.com.gh"
+    Access-Control-Allow-Methods = "GET, POST, PATCH, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization, x-internal-secret"
+
+# For static final-site deployment (if base is final-site)
+# [build]
+#   base = "final-site"
+#   command = "echo 'No build needed - static site'"
+#   publish = "."
